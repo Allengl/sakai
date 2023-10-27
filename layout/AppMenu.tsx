@@ -55,37 +55,43 @@ const AppMenu = () => {
             icon: 'pi pi-fw pi-briefcase',
             to: '/pages',
             items: [
+
+                {
+                    label: '流程中心',
+                    icon: 'pi pi-fw pi-th-large',
+                    to: '/pages/process'
+                },
                 {
                     label: '项目费用单',
                     icon: 'pi pi-fw pi-file',
                     to: '/pages/invoice'
                 },
-                // {
-                //     label: 'Landing',
-                //     icon: 'pi pi-fw pi-globe',
-                //     to: '/landing'
-                // },
-                // {
-                //     label: 'Auth',
-                //     icon: 'pi pi-fw pi-user',
-                //     items: [
-                //         {
-                //             label: 'Login',
-                //             icon: 'pi pi-fw pi-sign-in',
-                //             to: '/auth/login'
-                //         },
-                //         {
-                //             label: 'Error',
-                //             icon: 'pi pi-fw pi-times-circle',
-                //             to: '/auth/error'
-                //         },
-                //         {
-                //             label: 'Access Denied',
-                //             icon: 'pi pi-fw pi-lock',
-                //             to: '/auth/access'
-                //         }
-                //     ]
-                // },
+                {
+                    label: 'Landing',
+                    icon: 'pi pi-fw pi-globe',
+                    to: '/landing'
+                },
+                {
+                    label: 'Auth',
+                    icon: 'pi pi-fw pi-user',
+                    items: [
+                        {
+                            label: 'Login',
+                            icon: 'pi pi-fw pi-sign-in',
+                            to: '/auth/login'
+                        },
+                        {
+                            label: 'Error',
+                            icon: 'pi pi-fw pi-times-circle',
+                            to: '/auth/error'
+                        },
+                        {
+                            label: 'Access Denied',
+                            icon: 'pi pi-fw pi-lock',
+                            to: '/auth/access'
+                        }
+                    ]
+                },
                 // {
                 //     label: 'Crud',
                 //     icon: 'pi pi-fw pi-pencil',
@@ -176,7 +182,7 @@ const AppMenu = () => {
                 {model.map((item, i) => {
                     return !item?.seperator ? <AppMenuitem item={item} root={true} index={i} key={item.label} /> : <li className="menu-separator"></li>;
                 })}
-{/* 
+                {/* 
                 <Link href="https://blocks.primereact.org" target="_blank" style={{ cursor: 'pointer' }}>
                     <img alt="Prime Blocks" className="w-full mt-3" src={`/layout/images/banner-primeblocks${layoutConfig.colorScheme === 'light' ? '' : '-dark'}.png`} />
                 </Link> */}

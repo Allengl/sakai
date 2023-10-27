@@ -96,18 +96,22 @@ const InvoicePage = () => {
                 <div className="space-x-2">
                     <Button className="m-1" type="button" severity="success" icon="pi pi-plus" label="新增" outlined
                         onClick={() => {
-                            router.push('/pages/invoice/create/')
+                            router.push('/pages/invoice/new/')
                         }} />
                     <Button className="m-1" disabled={!selectedProduct}
                         type="button" severity="warning" icon="pi pi-trash" label="删除" outlined onClick={ConfirmDeleteSelected} />
                     <Button className="m-1" disabled={!selectedProduct}
-                        type="button" severity="info" icon="pi pi-filter-slash" label="编辑" outlined
+                        type="button" severity="info" icon="pi pi-file" label="编辑" outlined
                         onClick={() => {
-                            router.push('/pages/invoice/create/')
+                            router.push('/pages/invoice/edit/')
                         }}
                     />
                     <Button className="m-1" disabled={!selectedProduct}
-                        type="button" severity="help" icon="pi pi-filter-slash" label="审批记录" outlined onClick={clearFilter1} />
+                        type="button" severity="help" icon="pi pi-file-edit" label="审批记录" outlined onClick={
+                            () => {
+                                router.push('/pages/invoice/approve/')
+                            }
+                        } />
                 </div>
                 <span className="p-input-icon-left m-1">
                     <i className="pi pi-search" />

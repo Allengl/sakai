@@ -9,13 +9,42 @@ import { LayoutContext } from '../../../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
 
+
+interface LoginResponse {
+    result: string;
+    data: {
+        sid: string;
+    }
+    // 可能还有其他属性
+}
+
+
 const LoginPage = () => {
     const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('');
     const [checked, setChecked] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
 
     const router = useRouter();
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
+
+
+    const handleLogin = async () => {
+        const cmd = 'com.awspaas.user.apps.app20231017165850.login'
+        const url = `http://localhost:8088/portal/r/jd?cmd=${cmd}&userAccount=${username}&passWord=${password}`
+
+        const res = await fetch(url, {
+            method: 'POST',
+        })
+        const data: LoginResponse = await res.json()
+        console.log(data)
+
+        if (data.result === 'ok') {
+            localStorage.setItem('sid', data.data.sid)
+            router.push('/')
+        }
+    }
+
 
     return (
         <div className={containerClassName}>
@@ -30,32 +59,31 @@ const LoginPage = () => {
                 >
                     <div className="w-full surface-card py-8 px-5 sm:px-8" style={{ borderRadius: '53px' }}>
                         <div className="text-center mb-5">
-                            <img src="/demo/images/login/avatar.png" alt="Image" height="50" className="mb-3" />
-                            <div className="text-900 text-3xl font-medium mb-3">Welcome, Isabel!</div>
-                            <span className="text-600 font-medium">Sign in to continue</span>
+                            <div className="text-900 text-3xl font-medium mb-3">欢迎!</div>
+                            {/* <span className="text-600 font-medium">登录继续</span> */}
                         </div>
 
                         <div>
-                            <label htmlFor="email1" className="block text-900 text-xl font-medium mb-2">
-                                Email
+                            <label htmlFor="username" className="block text-900 text-xl font-medium mb-2">
+                                用户名
                             </label>
-                            <InputText id="email1" type="text" placeholder="Email address" className="w-full md:w-30rem mb-5" style={{ padding: '1rem' }} />
+                            <InputText id="username" type="text" value={username} placeholder="用户名" onChange={(e) => setUsername(e.target.value)} className="w-full md:w-30rem mb-5" style={{ padding: '1rem' }} />
 
                             <label htmlFor="password1" className="block text-900 font-medium text-xl mb-2">
-                                Password
+                                密码
                             </label>
-                            <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" toggleMask className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password>
+                            <Password inputId="password1" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="密码" toggleMask className="w-full mb-5" inputClassName="w-full p-3 md:w-30rem"></Password>
 
                             <div className="flex align-items-center justify-content-between mb-5 gap-5">
                                 <div className="flex align-items-center">
                                     <Checkbox inputId="rememberme1" checked={checked} onChange={(e) => setChecked(e.checked ?? false)} className="mr-2"></Checkbox>
-                                    <label htmlFor="rememberme1">Remember me</label>
+                                    <label htmlFor="rememberme1">记住密码</label>
                                 </div>
                                 <a className="font-medium no-underline ml-2 text-right cursor-pointer" style={{ color: 'var(--primary-color)' }}>
-                                    Forgot password?
+                                    忘记密码?
                                 </a>
                             </div>
-                            <Button label="Sign In" className="w-full p-3 text-xl" onClick={() => router.push('/')}></Button>
+                            <Button label="登录" className="w-full p-3 text-xl" onClick={handleLogin}></Button>
                         </div>
                     </div>
                 </div>
