@@ -11,6 +11,7 @@ import { LayoutContext } from '../../layout/context/layoutcontext';
 import Link from 'next/link';
 import { Demo } from '../../types/types';
 import { ChartData, ChartOptions } from 'chart.js';
+import API_BASE_URL from '../../constants/apiConfig';
 
 const lineData: ChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -110,12 +111,13 @@ const Dashboard = () => {
 
     const getInvoice = async () => {
         const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormList'
-        const url = `http://localhost:8088/portal/r/jd?cmd=${cmd}&sid=${localStorage.getItem('sid')}`
-        const res = await fetch(url, {
+        const uid = localStorage.getItem('uid')
+        const sid = localStorage.getItem('sid')
+        const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}`, {
             method: 'POST',
         })
 
-        const data = res.json()
+        const data = await res.json()
 
         console.log(data);
 

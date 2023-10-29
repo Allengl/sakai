@@ -40,6 +40,7 @@ const LoginPage = () => {
         console.log(data)
 
         if (data.result === 'ok') {
+            localStorage.setItem('uid', username)
             localStorage.setItem('sid', data.data.sid)
             router.push('/')
         }

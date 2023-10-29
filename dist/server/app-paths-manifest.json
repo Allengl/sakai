@@ -1,0 +1,8 @@
+{
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/(main)/pages/invoice/page": "app/(main)/pages/invoice/page.js",
+  "/(full-page)/auth/login/page": "app/(full-page)/auth/login/page.js",
+  "/(main)/pages/process/page": "app/(main)/pages/process/page.js",
+  "/(main)/pages/invoice/[id]/page": "app/(main)/pages/invoice/[id]/page.js",
+  "/(main)/pages/invoice/new/page": "app/(main)/pages/invoice/new/page.js"
+}

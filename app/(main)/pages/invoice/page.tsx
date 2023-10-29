@@ -9,60 +9,105 @@ import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import type { Demo } from '../../../../types/types';
 import { Dialog } from 'primereact/dialog';
+import API_BASE_URL from '../../../../constants/apiConfig';
+import { Tag } from 'primereact/tag';
+import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 
 interface Product {
-    id: string | null;
-    feetype: string;
-    objnumber: string;
-    objdesc: string;
+    DOCUMENT_NUM: string,
+    STATUS: string,
+    OBJECT_NUM: string,
+    DEPT_NAME: string,
+    MATERIAL_NUM: string,
+    OBJECT_NAME: string,
+    BOOK_NAME: string,
+    ID: string,
+    TYPE: string,
+    PLANER_NAME: string
 }
-
-
 
 const InvoicePage = () => {
 
     let emptyProduct: Product = {
-        id: null,
-        feetype: '',
-        objnumber: '',
-        objdesc: '',
+        DOCUMENT_NUM: "",
+        STATUS: "",
+        OBJECT_NUM: "",
+        DEPT_NAME: "",
+        MATERIAL_NUM: "",
+        OBJECT_NAME: "",
+        BOOK_NAME: "",
+        ID: "",
+        TYPE: "",
+        PLANER_NAME: ""
     };
 
     const [filters1, setFilters1] = useState<DataTableFilterMeta>({});
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState<Product>(emptyProduct);
-    const [products, setProducts] = useState<Demo.Product[]>([]);
+    const [products, setProducts] = useState<Product[]>([]);
     const [globalFilterValue1, setGlobalFilterValue1] = useState('');
     const [selectedProduct, setSelectedProduct] = useState<Product>(null as any)
     const [deleteProductDialog, setDeleteProductDialog] = useState<boolean>(false);
     const toast = useRef<Toast>(null);
     const router = useRouter();
+    const [statuses] = useState<string[]>(['INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK']);
 
 
 
-    const clearFilter1 = () => {
+    const getInvoice = async () => {
+        const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormList'
+        const uid = localStorage.getItem('uid')
+        const sid = localStorage.getItem('sid')
+        const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}`, {
+            method: 'POST',
+        })
+        const data = await res.json()
+
+        console.log(data);
+        setLoading(false);
+        setProducts(data)
+
+    }
+
+    useEffect(() => {
+        getInvoice();
         initFilters1();
-    };
+    }, [])
+
 
     const hideDeleteProductDialog = () => {
         setDeleteProductDialog(false);
     };
 
+    const deleteInvoice = async () => {
+        const cmd = 'com.awspaas.user.apps.app20231017165850.removeForm'
+        const sid = localStorage.getItem('sid')
+        const boid = selectedProduct!.ID
+        const res = await fetch(`${API_BASE_URL}?cmd=${cmd}&sid=${sid}&boid=${boid}`, {
+            method: 'POST',
+        })
+        const data = await res.json()
+        console.log(data);
+    }
+
+
 
 
     const deleteProduct = () => {
-        const selectedProductId = selectedProduct!.id;
-        let _products = products.filter((val) => val.id !== selectedProductId);
+        const selectedProductId = selectedProduct!.ID;
+        let _products = products.filter((val) => val.ID !== selectedProductId);
         setProducts(_products);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
         toast.current?.show({ severity: 'success', summary: '成功', detail: '删除成功!', life: 3000 });
         console.log('删除成功');
 
+        deleteInvoice();
     };
+
 
     const ConfirmDeleteSelected = () => {
         setDeleteProductDialog(true);
@@ -103,7 +148,8 @@ const InvoicePage = () => {
                     <Button className="m-1" disabled={!selectedProduct}
                         type="button" severity="info" icon="pi pi-file" label="编辑" outlined
                         onClick={() => {
-                            router.push('/pages/invoice/edit/')
+                            console.log(selectedProduct);
+                            router.push(`/pages/invoice/${selectedProduct?.ID}`)
                         }}
                     />
                     <Button className="m-1" disabled={!selectedProduct}
@@ -121,14 +167,13 @@ const InvoicePage = () => {
         );
     };
 
-    useEffect(() => {
-        ProductService.getProductsWithOrdersSmall().then((data) => {
-            setLoading(false);
-            setProducts(data)
-        });
+    // useEffect(() => {
+    //     ProductService.getProductsWithOrdersSmall().then((data) => {
+    //         setLoading(false);
+    //         setProducts(data)
+    //     });
 
-        initFilters1();
-    }, []);
+    // }, []);
 
 
     const initFilters1 = () => {
@@ -162,6 +207,28 @@ const InvoicePage = () => {
     };
 
 
+    const getSeverity = (value: string) => {
+        switch (value) {
+            case 'INSTOCK':
+                return 'success';
+
+            case 'LOWSTOCK':
+                return 'warning';
+
+            case 'OUTOFSTOCK':
+                return 'danger';
+
+            case 'NOSTART':
+                return 'info';
+
+            default:
+                return null;
+        }
+    };
+
+    const statusBodyTemplate = (rowData) => {
+        return <Tag value={rowData.STATUS} severity={getSeverity(rowData.STATUS)}></Tag>;
+    };
 
 
     const header = renderHeader();
@@ -179,7 +246,7 @@ const InvoicePage = () => {
                         showGridlines
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
-                        dataKey="id"
+                        dataKey="ID"
                         filters={filters1}
                         filterDisplay="menu"
                         loading={loading}
@@ -213,14 +280,15 @@ const InvoicePage = () => {
                         <Column field="verified" header="Verified" dataType="boolean" bodyClassName="text-center" style={{ minWidth: '8rem' }} body={verifiedBodyTemplate} filter filterElement={verifiedFilterTemplate} />
                      */}
                         <Column selectionMode="single" exportable={false}></Column>
-                        <Column sortable field="name" header="费用记录类型"
+                        <Column sortable field="TYPE" header="费用记录类型"
                             style={{ width: '10rem', minWidth: '10rem' }} />
-                        <Column sortable field="name" header="对象号" style={{ minWidth: '4rem' }} />
-                        <Column sortable field="name" header="对象描述" style={{ minWidth: '4rem' }}></Column>
-                        <Column sortable field="name" header="所属部门" style={{ minWidth: '4rem' }}></Column>
-                        <Column sortable field="name" header="书名" style={{ minWidth: '4rem' }}></Column>
-                        <Column sortable field="name" header="物料号" style={{ minWidth: '4rem' }}></Column>
-                        <Column sortable field="name" header="策划编辑" style={{ minWidth: '4rem' }}></Column>
+                        <Column sortable field="OBJECT_NUM" header="对象号" style={{ minWidth: '4rem' }} />
+                        <Column sortable field="OBJECT_NAME" header="对象描述" style={{ minWidth: '4rem' }}></Column>
+                        <Column sortable field="DEPT_NAME" header="所属部门" style={{ minWidth: '4rem' }}></Column>
+                        <Column sortable field="BOOK_NAME" header="书名" style={{ minWidth: '4rem' }}></Column>
+                        <Column sortable field="MATERIAL_NUM" header="物料号" style={{ minWidth: '4rem' }}></Column>
+                        {/* <Column sortable field="PLANER_NAME" header="策划编辑" style={{ minWidth: '4rem' }}></Column> */}
+                        <Column field="STATUS" header="状态" body={statusBodyTemplate} style={{ width: '10%' }}></Column>
 
                     </DataTable>
                 </div>
@@ -229,7 +297,7 @@ const InvoicePage = () => {
                     <div className="confirmation-content flex items-center">
                         {product && (
                             <span>
-                                确定要删除选中项 <b>{product.id}</b>吗?
+                                确定要删除选中项 <b>{product.ID}</b>吗?
                             </span>
                         )}
                     </div>
