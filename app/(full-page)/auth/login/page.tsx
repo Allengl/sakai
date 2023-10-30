@@ -42,15 +42,17 @@ const LoginPage = () => {
         if (data.result === 'ok') {
             localStorage.setItem('uid', username)
             localStorage.setItem('sid', data.data.sid)
-            router.push('/')
+            router.push('/home')
         }
     }
+
+    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
 
 
     return (
         <div className={containerClassName}>
             <div className="flex flex-column align-items-center justify-content-center">
-                <img src={`/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="Sakai logo" className="mb-5 w-6rem flex-shrink-0" />
+                <img src={`${baseUrl}/layout/images/logo-${layoutConfig.colorScheme === 'light' ? 'dark' : 'white'}.svg`} alt="logo" className="mb-5 w-6rem flex-shrink-0" />
                 <div
                     style={{
                         borderRadius: '56px',

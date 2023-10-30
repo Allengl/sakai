@@ -1,12 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
-  distDir: 'dist',
+  distDir: 'dists/portal/apps/com.awspaas.user.apps.app20231017165850',
+  assetPrefix: '/portal/apps/com.awspaas.user.apps.app20231017165850/', //配置静态资源前缀
+  basePath: '/portal/apps/com.awspaas.user.apps.app20231017165850',    //配置路由跳转时的前缀
   trailingSlash: true,
-  images: {
-    unoptimized: true   //配置图片不压缩
-  },
-  // basePath: '/portal/apps/com.awspaas.user.apps.app20231017165850',    //配置路由跳转时的前缀
   eslint: {
     ignoreDuringBuilds: true, //忽略eslint检查
   },

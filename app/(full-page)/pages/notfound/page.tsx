@@ -1,11 +1,14 @@
 import React from 'react';
 import Link from 'next/link';
 
+const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+
+
 const NotFoundPage = () => {
     return (
         <div className="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
             <div className="flex flex-column align-items-center justify-content-center">
-                <img src="/demo/images/notfound/logo-blue.svg" alt="Sakai logo" className="mb-5 w-6rem flex-shrink-0" />
+                <img src={`${baseUrl}/demo/images/notfound/logo-blue.svg`} alt="logo" className="mb-5 w-6rem flex-shrink-0" />
                 <div
                     style={{
                         borderRadius: '56px',

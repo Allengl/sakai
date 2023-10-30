@@ -54,9 +54,12 @@ const AppConfig = (props: AppConfigProps) => {
         document.documentElement.style.fontSize = layoutConfig.scale + 'px';
     };
 
+    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+
+
     useEffect(() => {
         applyScale();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [layoutConfig.scale]);
 
     return (
@@ -113,22 +116,22 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('bootstrap4-light-blue', 'light')}>
-                            <img src="/layout/images/themes/bootstrap4-light-blue.svg" className="w-2rem h-2rem" alt="Bootstrap Light Blue" />
+                            <img src={`${baseUrl}/layout/images/themes/bootstrap4-light-blue.svg`} className="w-2rem h-2rem" alt="Bootstrap Light Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('bootstrap4-light-purple', 'light')}>
-                            <img src="/layout/images/themes/bootstrap4-light-purple.svg" className="w-2rem h-2rem" alt="Bootstrap Light Purple" />
+                            <img src={`${baseUrl}/layout/images/themes/bootstrap4-light-purple.svg`} className="w-2rem h-2rem" alt="Bootstrap Light Purple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('bootstrap4-dark-blue', 'dark')}>
-                            <img src="/layout/images/themes/bootstrap4-dark-blue.svg" className="w-2rem h-2rem" alt="Bootstrap Dark Blue" />
+                            <img src={`${baseUrl}/layout/images/themes/bootstrap4-dark-blue.svg`} className="w-2rem h-2rem" alt="Bootstrap Dark Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('bootstrap4-dark-purple', 'dark')}>
-                            <img src="/layout/images/themes/bootstrap4-dark-purple.svg" className="w-2rem h-2rem" alt="Bootstrap Dark Purple" />
+                            <img src={`${baseUrl}/layout/images/themes/bootstrap4-dark-purple.svg`} className="w-2rem h-2rem" alt="Bootstrap Dark Purple" />
                         </button>
                     </div>
                 </div>
@@ -137,22 +140,22 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('md-light-indigo', 'light')}>
-                            <img src="/layout/images/themes/md-light-indigo.svg" className="w-2rem h-2rem" alt="Material Light Indigo" />
+                            <img src={`${baseUrl}/layout/images/themes/md-light-indigo.svg`} className="w-2rem h-2rem" alt="Material Light Indigo" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('md-light-deeppurple', 'light')}>
-                            <img src="/layout/images/themes/md-light-deeppurple.svg" className="w-2rem h-2rem" alt="Material Light DeepPurple" />
+                            <img src={`${baseUrl}/layout/images/themes/md-light-deeppurple.svg`} className="w-2rem h-2rem" alt="Material Light DeepPurple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('md-dark-indigo', 'dark')}>
-                            <img src="/layout/images/themes/md-dark-indigo.svg" className="w-2rem h-2rem" alt="Material Dark Indigo" />
+                            <img src={`${baseUrl}/layout/images/themes/md-dark-indigo.svg`} className="w-2rem h-2rem" alt="Material Dark Indigo" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('md-dark-deeppurple', 'dark')}>
-                            <img src="/layout/images/themes/md-dark-deeppurple.svg" className="w-2rem h-2rem" alt="Material Dark DeepPurple" />
+                            <img src={`${baseUrl}/layout/images/themes/md-dark-deeppurple.svg`} className="w-2rem h-2rem" alt="Material Dark DeepPurple" />
                         </button>
                     </div>
                 </div>
@@ -161,22 +164,22 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('mdc-light-indigo', 'light')}>
-                            <img src="/layout/images/themes/md-light-indigo.svg" className="w-2rem h-2rem" alt="Material Light Indigo" />
+                            <img src={`${baseUrl}/layout/images/themes/md-light-indigo.svg`} className="w-2rem h-2rem" alt="Material Light Indigo" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('mdc-light-deeppurple', 'light')}>
-                            <img src="/layout/images/themes/md-light-deeppurple.svg" className="w-2rem h-2rem" alt="Material Light Deep Purple" />
+                            <img src={`${baseUrl}/layout/images/themes/md-light-deeppurple.svg`} className="w-2rem h-2rem" alt="Material Light Deep Purple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('mdc-dark-indigo', 'dark')}>
-                            <img src="/layout/images/themes/md-dark-indigo.svg" className="w-2rem h-2rem" alt="Material Dark Indigo" />
+                            <img src={`${baseUrl}/layout/images/themes/md-dark-indigo.svg`} className="w-2rem h-2rem" alt="Material Dark Indigo" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('mdc-dark-deeppurple', 'dark')}>
-                            <img src="/layout/images/themes/md-dark-deeppurple.svg" className="w-2rem h-2rem" alt="Material Dark Deep Purple" />
+                            <img src={`${baseUrl}/layout/images/themes/md-dark-deeppurple.svg`} className="w-2rem h-2rem" alt="Material Dark Deep Purple" />
                         </button>
                     </div>
                 </div>
@@ -185,7 +188,7 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('tailwind-light', 'light')}>
-                            <img src="/layout/images/themes/tailwind-light.png" className="w-2rem h-2rem" alt="Tailwind Light" />
+                            <img src={`${baseUrl}/layout/images/themes/tailwind-light.png`} className="w-2rem h-2rem" alt="Tailwind Light" />
                         </button>
                     </div>
                 </div>
@@ -194,7 +197,7 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('fluent-light', 'light')}>
-                            <img src="/layout/images/themes/fluent-light.png" className="w-2rem h-2rem" alt="Fluent Light" />
+                            <img src={`${baseUrl}/layout/images/themes/fluent-light.png`} className="w-2rem h-2rem" alt="Fluent Light" />
                         </button>
                     </div>
                 </div>
@@ -203,42 +206,42 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-light-indigo', 'light')}>
-                            <img src="/layout/images/themes/lara-light-indigo.png" className="w-2rem h-2rem" alt="Lara Light Indigo" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-light-indigo.png`} className="w-2rem h-2rem" alt="Lara Light Indigo" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-light-blue', 'light')}>
-                            <img src="/layout/images/themes/lara-light-blue.png" className="w-2rem h-2rem" alt="Lara Light Blue" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-light-blue.png`} className="w-2rem h-2rem" alt="Lara Light Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-light-purple', 'light')}>
-                            <img src="/layout/images/themes/lara-light-purple.png" className="w-2rem h-2rem" alt="Lara Light Purple" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-light-purple.png`} className="w-2rem h-2rem" alt="Lara Light Purple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-light-teal', 'light')}>
-                            <img src="/layout/images/themes/lara-light-teal.png" className="w-2rem h-2rem" alt="Lara Light Teal" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-light-teal.png`} className="w-2rem h-2rem" alt="Lara Light Teal" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-dark-indigo', 'dark')}>
-                            <img src="/layout/images/themes/lara-dark-indigo.png" className="w-2rem h-2rem" alt="Lara Dark Indigo" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-dark-indigo.png`} className="w-2rem h-2rem" alt="Lara Dark Indigo" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-dark-blue', 'dark')}>
-                            <img src="/layout/images/themes/lara-dark-blue.png" className="w-2rem h-2rem" alt="Lara Dark Blue" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-dark-blue.png`} className="w-2rem h-2rem" alt="Lara Dark Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-dark-purple', 'dark')}>
-                            <img src="/layout/images/themes/lara-dark-purple.png" className="w-2rem h-2rem" alt="Lara Dark Purple" />
+                            <img src={`${baseUrl}/layout/images/themes/lara-dark-purple.png`} className="w-2rem h-2rem" alt="Lara Dark Purple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('lara-dark-teal', 'dark')}>
-                            <img src="/layout/images/themes/lara-dark-teal.png" className="w-2rem h-2rem" alt="Lara Dark Teal" />
+                            <img src={`${baseUrl}layout/images/themes/lara-dark-teal.png`} className="w-2rem h-2rem" alt="Lara Dark Teal" />
                         </button>
                     </div>
                 </div>
@@ -247,62 +250,62 @@ const AppConfig = (props: AppConfigProps) => {
                 <div className="grid">
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('saga-blue', 'light')}>
-                            <img src="/layout/images/themes/saga-blue.png" className="w-2rem h-2rem" alt="Saga Blue" />
+                            <img src={`${baseUrl}layout/images/themes/saga-blue.png`} className="w-2rem h-2rem" alt="Saga Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('saga-green', 'light')}>
-                            <img src="/layout/images/themes/saga-green.png" className="w-2rem h-2rem" alt="Saga Green" />
+                            <img src={`${baseUrl}layout/images/themes/saga-green.png`} className="w-2rem h-2rem" alt="Saga Green" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('saga-orange', 'light')}>
-                            <img src="/layout/images/themes/saga-orange.png" className="w-2rem h-2rem" alt="Saga Orange" />
+                            <img src={`${baseUrl}layout/images/themes/saga-orange.png`} className="w-2rem h-2rem" alt="Saga Orange" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('saga-purple', 'light')}>
-                            <img src="/layout/images/themes/saga-purple.png" className="w-2rem h-2rem" alt="Saga Purple" />
+                            <img src={`${baseUrl}layout/images/themes/saga-purple.png`} className="w-2rem h-2rem" alt="Saga Purple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('vela-blue', 'dark')}>
-                            <img src="/layout/images/themes/vela-blue.png" className="w-2rem h-2rem" alt="Vela Blue" />
+                            <img src={`${baseUrl}layout/images/themes/vela-blue.png`} className="w-2rem h-2rem" alt="Vela Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('vela-green', 'dark')}>
-                            <img src="/layout/images/themes/vela-green.png" className="w-2rem h-2rem" alt="Vela Green" />
+                            <img src={`${baseUrl}layout/images/themes/vela-green.png`} className="w-2rem h-2rem" alt="Vela Green" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('vela-orange', 'dark')}>
-                            <img src="/layout/images/themes/vela-orange.png" className="w-2rem h-2rem" alt="Vela Orange" />
+                            <img src={`${baseUrl}layout/images/themes/vela-orange.png`} className="w-2rem h-2rem" alt="Vela Orange" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('vela-purple', 'dark')}>
-                            <img src="/layout/images/themes/vela-purple.png" className="w-2rem h-2rem" alt="Vela Purple" />
+                            <img src={`${baseUrl}layout/images/themes/vela-purple.png`} className="w-2rem h-2rem" alt="Vela Purple" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('arya-blue', 'dark')}>
-                            <img src="/layout/images/themes/arya-blue.png" className="w-2rem h-2rem" alt="Arya Blue" />
+                            <img src={`${baseUrl}layout/images/themes/arya-blue.png`} className="w-2rem h-2rem" alt="Arya Blue" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('arya-green', 'dark')}>
-                            <img src="/layout/images/themes/arya-green.png" className="w-2rem h-2rem" alt="Arya Green" />
+                            <img src={`${baseUrl}layout/images/themes/arya-green.png`} className="w-2rem h-2rem" alt="Arya Green" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('arya-orange', 'dark')}>
-                            <img src="/layout/images/themes/arya-orange.png" className="w-2rem h-2rem" alt="Arya Orange" />
+                            <img src={`${baseUrl}layout/images/themes/arya-orange.png`} className="w-2rem h-2rem" alt="Arya Orange" />
                         </button>
                     </div>
                     <div className="col-3">
                         <button className="p-link w-2rem h-2rem" onClick={() => _changeTheme('arya-purple', 'dark')}>
-                            <img src="/layout/images/themes/arya-purple.png" className="w-2rem h-2rem" alt="Arya Purple" />
+                            <img src={`${baseUrl}layout/images/themes/arya-purple.png`} className="w-2rem h-2rem" alt="Arya Purple" />
                         </button>
                     </div>
                 </div>

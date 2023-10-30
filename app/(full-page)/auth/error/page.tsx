@@ -6,11 +6,13 @@ import { Button } from 'primereact/button';
 
 const ErrorPage = () => {
     const router = useRouter();
+    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+
 
     return (
         <div className="surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden">
             <div className="flex flex-column align-items-center justify-content-center">
-                <img src="/demo/images/error/logo-error.svg" alt="Sakai logo" className="mb-5 w-6rem flex-shrink-0" />
+                <img src={`${baseUrl}/demo/images/error/logo-error.svg`} alt=" logo" className="mb-5 w-6rem flex-shrink-0" />
                 <div
                     style={{
                         borderRadius: '56px',

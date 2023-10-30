@@ -6,11 +6,11 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Menu } from 'primereact/menu';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ProductService } from '../../demo/service/ProductService';
-import { LayoutContext } from '../../layout/context/layoutcontext';
-import { Demo } from '../../types/types';
+import { ProductService } from '../../../demo/service/ProductService';
+import { LayoutContext } from '../../../layout/context/layoutcontext';
+import { Demo } from '../../../types/types';
 import { ChartData, ChartOptions } from 'chart.js';
-import API_BASE_URL from '../../constants/apiConfig';
+import API_BASE_URL from '../../../constants/apiConfig';
 import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 
