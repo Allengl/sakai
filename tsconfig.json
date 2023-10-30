@@ -29,7 +29,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "dist/types/**/*.ts"
+    "dist/types/**/*.ts",
+    "/portal/apps/com.awspaas.user.apps.app20231017165850/types/**/*.ts"
   ],
   "exclude": [
     "node_modules"

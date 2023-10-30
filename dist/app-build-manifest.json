@@ -6,11 +6,6 @@
       "static/css/app/layout.css",
       "static/chunks/app/layout.js"
     ],
-    "/(main)/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(main)/page.js"
-    ],
     "/(main)/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -20,31 +15,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/(main)/pages/invoice/page.js"
-    ],
-    "/(main)/pages/invoice/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(main)/pages/invoice/[id]/page.js"
-    ],
-    "/(main)/pages/process/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(main)/pages/process/page.js"
-    ],
-    "/(full-page)/layout": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(full-page)/layout.js"
-    ],
-    "/(full-page)/auth/login/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(full-page)/auth/login/page.js"
-    ],
-    "/(main)/pages/invoice/new/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/(main)/pages/invoice/new/page.js"
     ]
   }
 }

@@ -6,8 +6,6 @@ import API_BASE_URL from '../../../../../constants/apiConfig'
 const EditInvoicePage = ({ params }: { params: { id: string } }) => {
 
 const getInvoiceDetail = async () => {
-    const sid = localStorage.getItem('sid')
-    const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormDetail'
     const boid = params.id
 
     // const res = await fetch(`${API_BASE_URL}?cmd=${cmd}&sid=${sid}&boid=${boid}`)

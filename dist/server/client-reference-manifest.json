@@ -48,14 +48,6 @@
         "async": false
       }
     },
-    "(app-client)/./app/(main)/page.tsx": {
-      "*": {
-        "id": "(sc_client)/./app/(main)/page.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
     "(app-client)/./layout/layout.tsx": {
       "*": {
         "id": "(sc_client)/./layout/layout.tsx",
@@ -67,46 +59,6 @@
     "(app-client)/./app/(main)/pages/invoice/page.tsx": {
       "*": {
         "id": "(sc_client)/./app/(main)/pages/invoice/page.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
-    "(app-client)/./app/(main)/pages/invoice/[id]/page.tsx": {
-      "*": {
-        "id": "(sc_client)/./app/(main)/pages/invoice/[id]/page.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
-    "(app-client)/./app/(main)/pages/process/page.tsx": {
-      "*": {
-        "id": "(sc_client)/./app/(main)/pages/process/page.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
-    "(app-client)/./layout/AppConfig.tsx": {
-      "*": {
-        "id": "(sc_client)/./layout/AppConfig.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
-    "(app-client)/./app/(full-page)/auth/login/page.tsx": {
-      "*": {
-        "id": "(sc_client)/./app/(full-page)/auth/login/page.tsx",
-        "name": "*",
-        "chunks": [],
-        "async": false
-      }
-    },
-    "(app-client)/./app/(main)/pages/invoice/new/page.tsx": {
-      "*": {
-        "id": "(sc_client)/./app/(main)/pages/invoice/new/page.tsx",
         "name": "*",
         "chunks": [],
         "async": false
@@ -203,14 +155,6 @@
       ],
       "async": false
     },
-    "/home/guolong/repos/sakai/app/(main)/page.tsx": {
-      "id": "(app-client)/./app/(main)/page.tsx",
-      "name": "*",
-      "chunks": [
-        "app/(main)/page:static/chunks/app/(main)/page.js"
-      ],
-      "async": false
-    },
     "/home/guolong/repos/sakai/layout/layout.tsx": {
       "id": "(app-client)/./layout/layout.tsx",
       "name": "*",
@@ -226,59 +170,13 @@
         "app/(main)/pages/invoice/page:static/chunks/app/(main)/pages/invoice/page.js"
       ],
       "async": false
-    },
-    "/home/guolong/repos/sakai/app/(main)/pages/invoice/[id]/page.tsx": {
-      "id": "(app-client)/./app/(main)/pages/invoice/[id]/page.tsx",
-      "name": "*",
-      "chunks": [
-        "app/(main)/pages/invoice/[id]/page:static/chunks/app/(main)/pages/invoice/[id]/page.js"
-      ],
-      "async": false
-    },
-    "/home/guolong/repos/sakai/app/(main)/pages/process/page.tsx": {
-      "id": "(app-client)/./app/(main)/pages/process/page.tsx",
-      "name": "*",
-      "chunks": [
-        "app/(main)/pages/process/page:static/chunks/app/(main)/pages/process/page.js"
-      ],
-      "async": false
-    },
-    "/home/guolong/repos/sakai/layout/AppConfig.tsx": {
-      "id": "(app-client)/./layout/AppConfig.tsx",
-      "name": "*",
-      "chunks": [
-        "app/(full-page)/layout:static/chunks/app/(full-page)/layout.js"
-      ],
-      "async": false
-    },
-    "/home/guolong/repos/sakai/app/(full-page)/auth/login/page.tsx": {
-      "id": "(app-client)/./app/(full-page)/auth/login/page.tsx",
-      "name": "*",
-      "chunks": [
-        "app/(full-page)/auth/login/page:static/chunks/app/(full-page)/auth/login/page.js"
-      ],
-      "async": false
-    },
-    "/home/guolong/repos/sakai/app/(main)/pages/invoice/new/page.tsx": {
-      "id": "(app-client)/./app/(main)/pages/invoice/new/page.tsx",
-      "name": "*",
-      "chunks": [
-        "app/(main)/pages/invoice/new/page:static/chunks/app/(main)/pages/invoice/new/page.js"
-      ],
-      "async": false
     }
   },
   "entryCSSFiles": {
     "/home/guolong/repos/sakai/app/layout": [
       "static/css/app/layout.css"
     ],
-    "/home/guolong/repos/sakai/app/(main)/page": [],
     "/home/guolong/repos/sakai/app/(main)/layout": [],
-    "/home/guolong/repos/sakai/app/(main)/pages/invoice/page": [],
-    "/home/guolong/repos/sakai/app/(main)/pages/invoice/[id]/page": [],
-    "/home/guolong/repos/sakai/app/(main)/pages/process/page": [],
-    "/home/guolong/repos/sakai/app/(full-page)/layout": [],
-    "/home/guolong/repos/sakai/app/(full-page)/auth/login/page": [],
-    "/home/guolong/repos/sakai/app/(main)/pages/invoice/new/page": []
+    "/home/guolong/repos/sakai/app/(main)/pages/invoice/page": []
   }
 }

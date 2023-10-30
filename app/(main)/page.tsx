@@ -8,10 +8,11 @@ import { Menu } from 'primereact/menu';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ProductService } from '../../demo/service/ProductService';
 import { LayoutContext } from '../../layout/context/layoutcontext';
-import Link from 'next/link';
 import { Demo } from '../../types/types';
 import { ChartData, ChartOptions } from 'chart.js';
 import API_BASE_URL from '../../constants/apiConfig';
+import { useRouter } from 'next/navigation';
+import { Tag } from 'primereact/tag';
 
 const lineData: ChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -42,7 +43,8 @@ const Dashboard = () => {
     const [lineOptions, setLineOptions] = useState<ChartOptions>({});
     const { layoutConfig } = useContext(LayoutContext);
 
-    const [invoice, setInvoice] = useState<any>();
+    const [invoiceData, setInvoiceData] = useState();
+    const router = useRouter()
 
     const applyLightTheme = () => {
         const lineOptions: ChartOptions = {
@@ -120,6 +122,7 @@ const Dashboard = () => {
         const data = await res.json()
 
         console.log(data);
+        setInvoiceData(data)
 
     }
 
@@ -144,6 +147,29 @@ const Dashboard = () => {
         });
     };
 
+    const getSeverity = (value: string) => {
+        switch (value) {
+            case 'active':
+                return 'success';
+
+            case 'NOSTART':
+                return 'warning';
+
+            case 'terminate':
+                return 'danger';
+
+            case '1111':
+                return 'info';
+
+            default:
+                return null;
+        }
+    };
+
+
+    const statusBodyTemplate = (rowData) => {
+        return <Tag value={rowData.STATUS} severity={getSeverity(rowData.STATUS)}></Tag>;
+    };
 
 
 
@@ -214,18 +240,21 @@ const Dashboard = () => {
             <div className="col-12 xl:col-6">
                 <div className="card">
                     <h5>项目费用单</h5>
-                    <DataTable value={products} rows={5} paginator responsiveLayout="scroll">
+                    <DataTable value={invoiceData} rows={5} paginator responsiveLayout="scroll">
                         {/* <Column header="Image" body={(data) => <img className="shadow-2" src={`/demo/images/product/${data.image}`} alt={data.image} width="50" />} /> */}
-                        <Column field="name" header="费用记录类型" sortable style={{ width: '35%' }} />
-                        <Column field="name" header="对象号" sortable style={{ width: '35%' }} />
-                        <Column field="price" header="对象描述" sortable style={{ width: '35%' }} body={(data) => formatCurrency(data.price)} />
+                        <Column field="TYPE" header="费用记录类型" sortable style={{ width: '35%' }} />
+                        <Column field="OBJECT_NUM" header="对象号" sortable style={{ width: '35%' }} />
+                        <Column field="OBJECT_NAME" header="对象描述" sortable style={{ width: '35%' }} body={(data) => formatCurrency(data.price)} />
+                        <Column field="STATUS" header="状态" body={statusBodyTemplate} style={{ width: '10%' }}></Column>
                         <Column
                             header="View"
                             style={{ width: '15%' }}
-                            body={() => (
+                            body={(row) => (
                                 <>
                                     <Button icon="pi pi-search" text
-
+                                        onClick={() => {
+                                            router.push(`/pages/invoice/approve/${row.ID}/`)
+                                        }}
                                     />
                                 </>
                             )}

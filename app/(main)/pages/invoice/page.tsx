@@ -103,8 +103,7 @@ const InvoicePage = () => {
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
         toast.current?.show({ severity: 'success', summary: '成功', detail: '删除成功!', life: 3000 });
-        console.log('删除成功');
-
+        setSelectedProduct(null as any)
         deleteInvoice();
     };
 
@@ -155,7 +154,7 @@ const InvoicePage = () => {
                     <Button className="m-1" disabled={!selectedProduct}
                         type="button" severity="help" icon="pi pi-file-edit" label="审批记录" outlined onClick={
                             () => {
-                                router.push('/pages/invoice/approve/')
+                                router.push(`/pages/invoice/approve/${selectedProduct?.ID}`)
                             }
                         } />
                 </div>
@@ -209,16 +208,16 @@ const InvoicePage = () => {
 
     const getSeverity = (value: string) => {
         switch (value) {
-            case 'INSTOCK':
+            case 'active':
                 return 'success';
 
-            case 'LOWSTOCK':
+            case 'NOSTART':
                 return 'warning';
 
-            case 'OUTOFSTOCK':
+            case 'terminate':
                 return 'danger';
 
-            case 'NOSTART':
+            case 'INSTOCK':
                 return 'info';
 
             default:
@@ -251,15 +250,14 @@ const InvoicePage = () => {
                         filterDisplay="menu"
                         loading={loading}
                         responsiveLayout="scroll"
-                        emptyMessage="没有数据."
+                        emptyMessage="没有数据..."
                         header={header}
                         selection={selectedProduct}
                         onSelectionChange={(e) => {
                             setSelectedProduct(e.value)
                             console.log(e.value);
-
-
                         }}
+                        footer={`共 ${products.length} 条`}
                     >
                         {/* <Column field="name" header="Name" sortable style={{ minWidth: '12rem' }} />
                         <Column header="Country" filterField="country.name" style={{ minWidth: '12rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" filterClear={filterClearTemplate} filterApply={filterApplyTemplate} />
@@ -297,7 +295,7 @@ const InvoicePage = () => {
                     <div className="confirmation-content flex items-center">
                         {product && (
                             <span>
-                                确定要删除选中项 <b>{product.ID}</b>吗?
+                                确定要删除选中项吗?
                             </span>
                         )}
                     </div>

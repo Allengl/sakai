@@ -10,6 +10,10 @@ import { useRouter } from 'next/navigation';
 import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { v4 as uuidv4, v5 as uuidv5, validate as uuidValidate } from 'uuid';
+import { InputTextarea } from 'primereact/inputtextarea';
+import { Sidebar } from 'primereact/sidebar';
+
 
 interface InvoiceFormProps {
   pageType: 'new' | 'edit' | 'approve'
@@ -27,6 +31,7 @@ interface WBS {
   DEPT_NAME: string,
   DEPT_NUM: string,
   PLANER_NAME: string,
+  TYPE: string,
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
@@ -35,13 +40,27 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
   const [WBSDialogVisible, setWBSDialogVisible] = React.useState(false);
   const [wbsData, setWbsData] = React.useState([]);
   const [selectedWbs, setSelectedWbs] = useState<WBS>();
+  const [invoiceDetail, setInvoiceDetail] = useState<any>({});
+  const [msg, setMsg] = useState('');
+  const [sidebarVisible, setSidebarVisible] = useState(false);
+  const [innerUrl, setInnerUrl] = useState('');
+  const sid = localStorage.getItem('sid');
+  const processInstId = localStorage.getItem('processInstId');
+  const taskInstId = localStorage.getItem('taskInstId');
+  const [showButton, setShowButton] = useState(false);
+
+  const newUrl = `http://localhost:8088/portal/r/w?&sid=${sid}&cmd=CLIENT_BPM_FORM_TRACK_OPEN&processInstId=${processInstId}&formInfo=`;
+
+
+  const randomUUID = uuidv4();
+
 
   const show = () => {
     toast.current.show({ severity: 'success', summary: '提交成功', detail: getValues('DOCUMENT_NUM') });
   };
 
   const show1 = () => {
-    toast.current.show({ severity: 'success', summary: '更新', detail: getValues('DOCUMENT_NUM') });
+    toast.current.show({ severity: 'success', summary: '更新成功', detail: getValues('DOCUMENT_NUM') });
   };
 
   const defaultValues = {
@@ -53,7 +72,6 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     DEPT_NUM: '',
     DEPT_NAME: '',
     OBJECT_NAME: '',
-    TYPE: '',
     CHIEF: '',
     PLANER_NAME: '',
     COMPANY_CODE: '',
@@ -62,6 +80,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     CREATEDATE: '',
     UPDATEUSER: '',
     UPDATEDATE: '',
+    TYPE: 'WBS 元素'
     // Add other default values as needed
   };
 
@@ -74,15 +93,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
   } = useForm({ defaultValues });
 
 
-
-  // const onSubmited = (data: object) => {
-  //   data.DOCUMENT_NUM && show();
-
-  //   reset();
-  // };
-
   const createInvoice = async (data: object) => {
-
     const queryParams = Object.entries(data)
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
@@ -99,13 +110,27 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     console.log(result);
     if (result.result === 'ok') {
       show();
-      reset();
-      router.push('/pages/invoice');
+      localStorage.setItem('boid', result.data);
+      setTimeout(() => {
+        router.push(`/pages/invoice/${result.data}`);
+      }, 1000)
+      getInvoiceDetail();
     }
   }
 
-  const updateInvoice = async (data: object) => {
+  const getInvoiceDetail = async () => {
+    const sid = localStorage.getItem('sid')
+    const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormDetail'
+    const boid = localStorage.getItem('boid')
+    const res = await fetch(`${API_BASE_URL}?cmd=${cmd}&sid=${sid}&boid=${boid}`)
+    const data = await res.json()
+    console.log(data)
 
+    setInvoiceDetail(data)
+  }
+
+
+  const updateInvoice = async (data: object) => {
     const queryParams = Object.entries(data)
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
@@ -150,13 +175,68 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     });
     console.log(data);
 
-    // 如果是新建页面，那么就调用新建接口
+    const newData = {
+      ...data,
+      TYPE: 'WBS element'
+    }
+
     if (pageType === 'new') {
-      createInvoice(data)
+      createInvoice(newData)
     } else if (pageType === 'edit') {
       // 如果是编辑页面，那么就调用编辑接口
-      updateInvoice(data)
+      updateInvoice(newData)
     }
+  }
+
+  const handelApprove = async (msg: string, comment: string) => {
+    const sid = localStorage.getItem('sid');
+    const cmd = 'CLIENT_BPM_FORM_PAGE_P_SAVE_DATA'
+    const uid = localStorage.getItem('uid');
+    const processInstId = localStorage.getItem('processInstId');
+    const taskInstId = localStorage.getItem('taskInstId');
+    const openState = 1
+    const currentPage = 1
+    const formDefId = ''
+    const formData = ''
+    const boId = ''
+    const boDefId = ''
+    const oldFormData = ''
+    const idCreate = true
+    const isTransact = true
+    const isValidateForm = comment === '提交' ? true : 'false'
+    const isNew = ''
+    const commentInfo = comment === '办理' ?
+      { "msg": msg, "isSelected": true, "commentId": `${randomUUID}`, "isCommentCreate": true, "hasFiles": false, "setComments": false, "processDefId": "obj_e9a85bafeeba49e2aa079b00ae93eefa" }
+      : { "msg": msg, "isSelected": true, "isValidateForm": comment === '提交' ? true : 'false', "commentOption": comment, "commentId": `${randomUUID}`, "isCommentCreate": true, "hasFiles": false, "setComments": false, "processDefId": "obj_e9a85bafeeba49e2aa079b00ae93eefa" }
+
+
+
+
+    const url = `${API_BASE_URL}?cmd=${cmd}&sid=${sid}&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=${openState}&currentPage=${currentPage}&formDefId=${formDefId}&formData=${formData}&boId=${boId}&boDefId=${boDefId}&oldFormData=${oldFormData}&idCreate=${idCreate}&isTransact=${isTransact}&isValidateForm=${isValidateForm}&commentInfo=${JSON.stringify(commentInfo)}&isNew=${isNew}`;
+
+ if(comment === '提交' || comment === '拒绝') {
+    const response = await fetch(url, {
+      method: 'POST',
+    });
+    const data = await response.json();
+    // router.push('/pages/invoice')
+    console.log(data);
+      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`,
+        {
+          method: 'POST',
+        }
+      )
+ }
+    if (comment === '办理') {
+      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskInstId=${taskInstId}`,{
+        method: 'POST',
+      })
+    }
+    if (comment === '作废') {
+      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`)
+    }
+
+
 
   }
 
@@ -168,9 +248,21 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     setWBSDialogVisible(true);
   }
 
+  const fetchAllShowButton = async () => {
+    const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_FORM_MAIN_PAGE_JSON&processInstId=${processInstId}&taskInstId=${taskInstId}&currentPage=1&openState=1&formDefId=&boId=&displayToolbar=true&lang=`)
+    const data = await res.json()
+    console.log(data); {
+      if (data.data.usertaskComment && data.data.usertaskComment.actionOpinions) {
+        setShowButton(true)
+      }
+    }
+  }
   useEffect(() => {
+
+    fetchAllShowButton();
+
     getWbsData()
-    if(pageType === 'edit') {
+    if (pageType === 'edit' || pageType === 'approve') {
       const boid = localStorage.getItem('boid');
       const sid = localStorage.getItem('sid');
       const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormDetail'
@@ -199,6 +291,30 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     }
   }, []);
 
+  const formDisabled = pageType === 'approve';
+
+
+  const startProcess = async () => {
+    const sid = localStorage.getItem('sid');
+    const cmd = 'com.awspaas.user.apps.app20231017165850.startProcess'
+    const uid = localStorage.getItem('uid');
+    const boid = localStorage.getItem('boid');
+    const processDefId = 'obj_e9a85bafeeba49e2aa079b00ae93eefa'
+    const url = `${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}&boid=${boid}&processDefId=${processDefId}`;
+    const response = await fetch(url, {
+      method: 'POST',
+    });
+
+    const result = await response.json();
+    console.log(result);
+    if (result.result === 'ok') {
+      show();
+      reset();
+      // router.push('/pages/invoice');
+    }
+
+  }
+
 
   return (
     <form onSubmit={handleSubmit(onSubmit1)} className="flex flex-column gap-2">
@@ -210,6 +326,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
               name="DOCUMENT_NUM"
               control={control}
               rules={{ required: '凭证编号 is required.' }}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>凭证编号</label>
@@ -228,6 +345,8 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="OBJECT_NUM"
               control={control}
+              disabled={formDisabled}
+
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>WBS 元素</label>
@@ -246,6 +365,8 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="OBJECT_NAME"
               control={control}
+              disabled={formDisabled}
+
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>&nbsp;</label>
@@ -263,7 +384,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
           <div className="field col-12 md:col-1">
             <div className='flex items-center my-4'>
               <label>&nbsp;</label>
-              <Button icon="pi pi-search" rounded text raised severity="success" aria-label="Search"
+              <Button
+                disabled={formDisabled}
+                icon="pi pi-search" rounded text raised severity="success" aria-label="Search"
                 onClick={showWBSDialog}
               />
             </div>
@@ -272,6 +395,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="MATERIAL_NUM"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>物料号</label>
@@ -290,6 +414,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="DEPT_NUM"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>所属部门</label>
@@ -308,6 +433,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="DEPT_NAME"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>&nbsp;</label>
@@ -326,6 +452,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="BOOK_NAME"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>书名</label>
@@ -344,6 +471,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="CHIEF"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>著译者</label>
@@ -362,6 +490,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="PLANER_NAME"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>策划编辑</label>
@@ -380,6 +509,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="CREATEUSER"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>创建人</label>
@@ -398,6 +528,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="CREATEDATE"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>创建日期</label>
@@ -416,6 +547,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="UPDATEUSER"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>最后修改人</label>
@@ -434,6 +566,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="UPDATEDATE"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>最后修改日期</label>
@@ -456,6 +589,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="OBJECT_NUM"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>WBS 元素</label>
@@ -474,6 +608,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="OBJECT_NAME"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>&nbsp;</label>
@@ -498,6 +633,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="COMPANY_CODE"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>公司代码</label>
@@ -516,6 +652,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="PLANER_NUM"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>申请人编号</label>
@@ -534,6 +671,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
             <Controller
               name="administrator"
               control={control}
+              disabled={formDisabled}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>管理员</label>
@@ -550,17 +688,63 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
           </div>
         </div>
       </Panel>
+      {
+        pageType === 'approve' && (
+          <Panel header='审批意见'>
+            <InputTextarea
+              className='w-full'
+              value={msg} onChange={(e) => setMsg(e.target.value)}
+              rows={5}
+            />
+          </Panel>
+        )
+
+      }
       <div className="field col-12 md-4 flex gap-3 justify-end">
         {pageType === 'approve' && (
           <>
-            <Button label="驳回" type="submit" severity="danger" icon="pi pi-times" />
-            <Button label="审批" type="submit" severity="success" icon="pi pi-check" />
+            {showButton ? (
+              <>
+                <Button
+                  onClick={() => {
+                    handelApprove(msg, '提交')
+                  }}
+                  label="同意" outlined severity="success" icon="pi pi-check" />
+                <Button
+                  onClick={() => {
+                    handelApprove(msg, '拒绝')
+                  }}
+                  label="拒绝" outlined severity="danger" icon="pi pi-times" />
+              </>
+            ) : (
+              <>
+                <Button
+                  onClick={() => {
+                    handelApprove('', '办理')
+                  }}
+                  label="办理" outlined severity="success" icon="pi pi-check" />
+                <Button
+                  onClick={() => {
+                    handelApprove(msg, '作废')
+                  }}
+                  label="作废" outlined severity="danger" icon="pi pi-times" />
+              </>
+            )}
+            <Button
+              label="跟踪" outlined severity="info" icon="pi pi-times"
+              onClick={() => {
+                setSidebarVisible(true)
+              }}
+            />
           </>
         )}
-        {(pageType === 'new' || pageType === 'edit') && (
+        {(pageType === 'edit' || pageType === 'new') && (
           <>
-            <Button label="保存" type="submit" severity="info" icon="pi pi-save" />
-            <Button label="提交" type="submit" severity="success" icon="pi pi-check" />
+            <Button label="保存" onClick={
+              handleSubmit(onSubmit1)
+            }
+              type="submit" severity="info" icon="pi pi-save" />
+            <Button label="提交" onClick={startProcess} severity="success" icon="pi pi-check" />
           </>
         )}
       </div>
@@ -630,7 +814,13 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
           </div>
         </div>
       </Dialog>
-    </form>
+      <Sidebar visible={sidebarVisible} position="right"
+        className='w-8'
+        onHide={() => setSidebarVisible(false)}>
+        <iframe src={newUrl} className='w-full h-full'
+        ></iframe>
+      </Sidebar>
+    </form >
   );
 }
 

@@ -66,11 +66,11 @@ const AppMenu = () => {
                     icon: 'pi pi-fw pi-file',
                     to: '/pages/invoice'
                 },
-                {
-                    label: 'Landing',
-                    icon: 'pi pi-fw pi-globe',
-                    to: '/landing'
-                },
+                // {
+                //     label: 'Landing',
+                //     icon: 'pi pi-fw pi-globe',
+                //     to: '/landing'
+                // },
                 {
                     label: 'Auth',
                     icon: 'pi pi-fw pi-user',
@@ -80,16 +80,16 @@ const AppMenu = () => {
                             icon: 'pi pi-fw pi-sign-in',
                             to: '/auth/login'
                         },
-                        {
-                            label: 'Error',
-                            icon: 'pi pi-fw pi-times-circle',
-                            to: '/auth/error'
-                        },
-                        {
-                            label: 'Access Denied',
-                            icon: 'pi pi-fw pi-lock',
-                            to: '/auth/access'
-                        }
+                        // {
+                        //     label: 'Error',
+                        //     icon: 'pi pi-fw pi-times-circle',
+                        //     to: '/auth/error'
+                        // },
+                        // {
+                        //     label: 'Access Denied',
+                        //     icon: 'pi pi-fw pi-lock',
+                        //     to: '/auth/access'
+                        // }
                     ]
                 },
                 // {

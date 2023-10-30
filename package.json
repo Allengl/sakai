@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next buil",
+    "build": "next build",
     "start": "next start",
     "format": "prettier --write \"{components,app,service,api-generator}/**/*.{js,ts,tsx,d.ts}\"",
     "lint": "next lint"
@@ -22,7 +22,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "7.47.0",
-    "typescript": "5.1.3"
+    "typescript": "5.1.3",
+    "uuid": "9.0.1"
   },
   "devDependencies": {
     "eslint": "8.43.0",
