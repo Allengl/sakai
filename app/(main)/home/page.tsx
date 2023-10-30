@@ -36,12 +36,25 @@ const lineData: ChartData = {
     ]
 };
 
+type TasksNumber = {
+    queryTodoTask: number,
+    queryToReadTask: number,
+    queryAlreadyDoTask: number,
+    queryAlreadyReadTask: number,
+}
+
 const Dashboard = () => {
     const [products, setProducts] = useState<Demo.Product[]>([]);
     const menu1 = useRef<Menu>(null);
     const menu2 = useRef<Menu>(null);
     const [lineOptions, setLineOptions] = useState<ChartOptions>({});
     const { layoutConfig } = useContext(LayoutContext);
+    const [tasksNumber, setTasksNumber] = useState<TasksNumber>({
+        queryTodoTask: 0,
+        queryToReadTask: 0,
+        queryAlreadyDoTask: 0,
+        queryAlreadyReadTask: 0,
+    })
 
     const [invoiceData, setInvoiceData] = useState();
     const router = useRouter()
@@ -118,16 +131,46 @@ const Dashboard = () => {
         const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}`, {
             method: 'POST',
         })
-
         const data = await res.json()
-
         console.log(data);
         setInvoiceData(data)
-
     }
 
 
+    const queryTask = async (type:
+        'queryTodoTask'
+        | 'queryToReadTask'
+        | 'queryAlreadyDoTask'
+        | 'queryAlreadyReadTask'
+    ) => {
+        const sid = localStorage.getItem('sid')
+        const cmd = `com.awspaas.user.apps.app20231017165850.${type}`
+        const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}`;
+
+        const res = await fetch(url, {
+            method: 'POST',
+        })
+
+        const data = await res.json()
+        return data.length
+
+    }
+    const getTasksNumber = async () => {
+        const queryTodoTask = await queryTask('queryTodoTask')
+        const queryToReadTask = await queryTask('queryToReadTask')
+        const queryAlreadyDoTask = await queryTask('queryAlreadyDoTask')
+        const queryAlreadyReadTask = await queryTask('queryAlreadyReadTask')
+
+        setTasksNumber({
+            queryTodoTask,
+            queryToReadTask,
+            queryAlreadyDoTask,
+            queryAlreadyReadTask,
+        })
+    }
     useEffect(() => {
+
+        getTasksNumber()
         getInvoice()
         ProductService.getProductsSmall().then((data) => setProducts(data));
     }, []);
@@ -181,7 +224,7 @@ const Dashboard = () => {
                     <div className="flex justify-content-between mb-3">
                         <div>
                             <span className="block text-500 font-medium mb-3">待办任务</span>
-                            <div className="text-900 font-medium text-xl">152 待办</div>
+                            <div className="text-900 font-medium text-xl">{tasksNumber.queryTodoTask} 待办</div>
                         </div>
                         <div className="flex align-items-center justify-content-center bg-blue-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
                             <i className="pi pi-file-edit text-blue-500 text-xl" />
@@ -196,7 +239,7 @@ const Dashboard = () => {
                     <div className="flex justify-content-between mb-3">
                         <div>
                             <span className="block text-500 font-medium mb-3">待阅任务</span>
-                            <div className="text-900 font-medium text-xl">128 未读</div>
+                            <div className="text-900 font-medium text-xl">{tasksNumber.queryToReadTask} 未读</div>
                         </div>
                         <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
                             <i className="pi pi-bell text-orange-500 text-xl" />
@@ -211,7 +254,7 @@ const Dashboard = () => {
                     <div className="flex justify-content-between mb-3">
                         <div>
                             <span className="block text-500 font-medium mb-3">已办任务</span>
-                            <div className="text-900 font-medium text-xl">28441 已办</div>
+                            <div className="text-900 font-medium text-xl">{tasksNumber.queryAlreadyDoTask} 已办</div>
                         </div>
                         <div className="flex align-items-center justify-content-center bg-cyan-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
                             <i className="pi pi-check-circle text-cyan-500 text-xl" />
@@ -226,7 +269,7 @@ const Dashboard = () => {
                     <div className="flex justify-content-between mb-3">
                         <div>
                             <span className="block text-500 font-medium mb-3">已阅任务</span>
-                            <div className="text-900 font-medium text-xl">152 已阅</div>
+                            <div className="text-900 font-medium text-xl">{tasksNumber.queryAlreadyReadTask} 已阅</div>
                         </div>
                         <div className="flex align-items-center justify-content-center bg-purple-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
                             <i className="pi pi-check-square text-purple-500 text-xl" />
@@ -261,7 +304,7 @@ const Dashboard = () => {
                         />
                     </DataTable>
                 </div>
-                <div className="card">
+                {/* <div className="card">
                     <div className="flex justify-content-between align-items-center mb-5">
                         <h5>Best Selling Products</h5>
                         <div>
@@ -350,7 +393,7 @@ const Dashboard = () => {
                             </div>
                         </li>
                     </ul>
-                </div>
+                </div> */}
             </div>
 
             <div className="col-12 xl:col-6">
@@ -379,7 +422,7 @@ const Dashboard = () => {
                     <ul className="p-0 mx-0 mt-0 mb-4 list-none">
                         <li className="flex align-items-center py-2 border-bottom-1 surface-border">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-bell text-xl text-blue-500" />
+                                <i className="pi pi-info-circle text-xl text-blue-500" />
                             </div>
                             <span className="text-900 line-height-3">
                                 Richard Jones
@@ -391,7 +434,7 @@ const Dashboard = () => {
                         </li>
                         <li className="flex align-items-center py-2">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-bell text-xl text-blue-500" />
+                                <i className="pi pi-info-circle text-xl text-blue-500" />
                             </div>
                             <span className="text-700 line-height-3">
                                 Your request for withdrawal of <span className="text-blue-500 font-medium">2500$</span> has been initiated.
@@ -448,7 +491,7 @@ const Dashboard = () => {
                     <ul className="p-0 mx-0 mt-0 mb-4 list-none">
                         <li className="flex align-items-center py-2 border-bottom-1 surface-border">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-times text-xl text-red-500" />
+                                <i className="pi pi-bell text-xl text-green-500" />
                             </div>
                             <span className="text-900 line-height-3">
                                 Richard Jones
@@ -460,7 +503,7 @@ const Dashboard = () => {
                         </li>
                         <li className="flex align-items-center py-2">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-times text-xl text-red-500" />
+                                <i className="pi pi-bell text-xl text-blue-500" />
                             </div>
                             <span className="text-700 line-height-3">
                                 Your request for withdrawal of <span className="text-blue-500 font-medium">2500$</span> has been initiated.
