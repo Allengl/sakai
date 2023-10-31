@@ -1,6 +1,4 @@
 'use client';
-import { CustomerService } from '../../../../demo/service/CustomerService';
-import { ProductService } from '../../../../demo/service/ProductService';
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Column, ColumnFilterApplyTemplateOptions, ColumnFilterClearTemplateOptions, ColumnFilterElementTemplateOptions } from 'primereact/column';
@@ -10,11 +8,9 @@ import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
 
 import React, { use, useEffect, useRef, useState } from 'react';
-import type { Demo } from '../../../../types/types';
 import { Dialog } from 'primereact/dialog';
-import API_BASE_URL from '../../../../constants/constants';
+import { API_BASE_URL } from '../../../../constants/constants';
 import { Tag } from 'primereact/tag';
-import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 
 interface Product {
     DOCUMENT_NUM: string,

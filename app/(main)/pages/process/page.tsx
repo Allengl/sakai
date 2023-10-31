@@ -4,7 +4,7 @@ import { Column } from 'primereact/column';
 import { InputText } from 'primereact/inputtext';
 import { Menubar } from 'primereact/menubar';
 import React, { useEffect } from 'react'
-import API_BASE_URL from '../../../../constants/constants';
+import { API_BASE_URL } from '../../../../constants/constants';
 import { DataTable } from 'primereact/datatable';
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
@@ -121,7 +121,7 @@ const ProcessPage = () => {
               body={(row) => (
                 <>
                   <Button
-                    onClick={()=>{
+                    onClick={() => {
                       console.log(row)
                       localStorage.setItem('taskInstId', row.id)
                       localStorage.setItem('processInstId', row.processInstId)

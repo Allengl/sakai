@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Panel } from 'primereact/panel';
 import { Toast } from 'primereact/toast';
 import { classNames } from 'primereact/utils';
-import API_BASE_URL from '../../constants/constants';
+import { API_BASE_URL } from '../../constants/constants';
 import { useRouter } from 'next/navigation';
 import { Dialog } from 'primereact/dialog';
 import { DataTable } from 'primereact/datatable';

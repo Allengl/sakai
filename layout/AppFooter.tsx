@@ -6,7 +6,6 @@ import { ASSETS_BASE_PATH } from '../constants/constants';
 
 const AppFooter = () => {
     const { layoutConfig } = useContext(LayoutContext);
-
     const baseUrl = ASSETS_BASE_PATH;
 
 

@@ -6,11 +6,10 @@ import { Column } from 'primereact/column';
 import { DataTable } from 'primereact/datatable';
 import { Menu } from 'primereact/menu';
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { ProductService } from '../../../demo/service/ProductService';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 import { Demo } from '../../../types/types';
 import { ChartData, ChartOptions } from 'chart.js';
-import API_BASE_URL from '../../../constants/constants';
+import {API_BASE_URL} from '../../../constants/constants';
 import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 
@@ -169,10 +168,8 @@ const Dashboard = () => {
         })
     }
     useEffect(() => {
-
         getTasksNumber()
         getInvoice()
-        ProductService.getProductsSmall().then((data) => setProducts(data));
     }, []);
 
     useEffect(() => {
@@ -232,6 +229,7 @@ const Dashboard = () => {
                     </div>
                     {/* <span className="text-green-500 font-medium">24 new </span>
                     <span className="text-500">since last visit</span> */}
+
                 </div>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
@@ -492,7 +490,7 @@ const Dashboard = () => {
                     <ul className="p-0 mx-0 mt-0 mb-4 list-none">
                         <li className="flex align-items-center py-2 border-bottom-1 surface-border">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-bell text-xl text-green-500" />
+                                <i className="pi pi-bell text-xl text-blue-500" />
                             </div>
                             <span className="text-900 line-height-3">
                                 Richard Jones
