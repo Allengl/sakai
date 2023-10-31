@@ -2,32 +2,21 @@
 import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Column, ColumnFilterApplyTemplateOptions, ColumnFilterClearTemplateOptions, ColumnFilterElementTemplateOptions } from 'primereact/column';
-import { DataTable, DataTableExpandedRows, DataTableFilterMeta, DataTableValue } from 'primereact/datatable';
+import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
-
 import React, { use, useEffect, useRef, useState } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { API_BASE_URL } from '../../../../constants/constants';
 import { Tag } from 'primereact/tag';
+import { useApiStore } from '../../../stores/useApiStore';
+import { useDataStore } from '../../../stores/useDataStore';
+import { Invoice } from '../../../../types/data';
 
-interface Product {
-    DOCUMENT_NUM: string,
-    STATUS: string,
-    OBJECT_NUM: string,
-    DEPT_NAME: string,
-    MATERIAL_NUM: string,
-    OBJECT_NAME: string,
-    BOOK_NAME: string,
-    ID: string,
-    TYPE: string,
-    PLANER_NAME: string
-}
 
 const InvoicePage = () => {
-
-    let emptyProduct: Product = {
+    let emptyProduct: Invoice = {
         DOCUMENT_NUM: "",
         STATUS: "",
         OBJECT_NUM: "",
@@ -38,39 +27,38 @@ const InvoicePage = () => {
         ID: "",
         TYPE: "",
         PLANER_NAME: ""
-    };
+};
 
     const [filters1, setFilters1] = useState<DataTableFilterMeta>({});
     const [loading, setLoading] = useState(true);
-    const [product, setProduct] = useState<Product>(emptyProduct);
-    const [products, setProducts] = useState<Product[]>([]);
+    const [product, setProduct] = useState<Invoice>(emptyProduct);
     const [globalFilterValue1, setGlobalFilterValue1] = useState('');
-    const [selectedProduct, setSelectedProduct] = useState<Product>(null as any)
+    const [selectedProduct, setSelectedProduct] = useState<Invoice>(null as any)
     const [deleteProductDialog, setDeleteProductDialog] = useState<boolean>(false);
     const toast = useRef<Toast>(null);
     const router = useRouter();
+    const { cmd, uid, sid, setCmd, setUid, setSid } = useApiStore();
+    const { invoiceData, setInvoiceData } = useDataStore();
+
     const [statuses] = useState<string[]>(['INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK']);
 
 
 
     const getInvoice = async () => {
-        const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormList'
-        const uid = localStorage.getItem('uid')
-        const sid = localStorage.getItem('sid')
-        const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}`, {
-            method: 'POST',
-        })
+        const queryFormListCmd = `${cmd}.queryFormList`
+        const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${queryFormListCmd}&sid=${sid}`, { method: 'POST' })
         const data = await res.json()
-
         console.log(data);
         setLoading(false);
-        setProducts(data)
+        setInvoiceData(data)
+        setInvoiceData(data)
 
     }
 
     useEffect(() => {
         getInvoice();
-        initFilters1();
+        initFilters();
+        setLoading(false);
     }, [])
 
 
@@ -79,14 +67,14 @@ const InvoicePage = () => {
     };
 
     const deleteInvoice = async () => {
-        const cmd = 'com.awspaas.user.apps.app20231017165850.removeForm'
-        const sid = localStorage.getItem('sid')
+        const removeFormCmd = `${cmd}.removeForm`
         const boid = selectedProduct!.ID
-        const res = await fetch(`${API_BASE_URL}?cmd=${cmd}&sid=${sid}&boid=${boid}`, {
+        const res = await fetch(`${API_BASE_URL}?cmd=${removeFormCmd}&sid=${sid}&boid=${boid}`, {
             method: 'POST',
         })
         const data = await res.json()
         console.log(data);
+
     }
 
 
@@ -94,8 +82,8 @@ const InvoicePage = () => {
 
     const deleteProduct = () => {
         const selectedProductId = selectedProduct!.ID;
-        let _products = products.filter((val) => val.ID !== selectedProductId);
-        setProducts(_products);
+        let _invoiceData = invoiceData.filter((val) => val.ID !== selectedProductId);
+        setInvoiceData(_invoiceData);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
         toast.current?.show({ severity: 'success', summary: '成功', detail: '删除成功!', life: 3000 });
@@ -163,16 +151,9 @@ const InvoicePage = () => {
         );
     };
 
-    // useEffect(() => {
-    //     ProductService.getProductsWithOrdersSmall().then((data) => {
-    //         setLoading(false);
-    //         setProducts(data)
-    //     });
-
-    // }, []);
 
 
-    const initFilters1 = () => {
+    const initFilters = () => {
         setFilters1({
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
             name: {
@@ -236,7 +217,7 @@ const InvoicePage = () => {
                     <h5>项目费用单</h5>
                     <Toast ref={toast} />
                     <DataTable
-                        value={products}
+                        value={invoiceData}
                         paginator
                         className="p-datatable-gridlines"
                         showGridlines
@@ -254,7 +235,7 @@ const InvoicePage = () => {
                             setSelectedProduct(e.value)
                             console.log(e.value);
                         }}
-                        footer={`共 ${products.length} 条`}
+                        footer={`共 ${invoiceData.length} 条`}
                     >
                         {/* <Column field="name" header="Name" sortable style={{ minWidth: '12rem' }} />
                         <Column header="Country" filterField="country.name" style={{ minWidth: '12rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" filterClear={filterClearTemplate} filterApply={filterApplyTemplate} />

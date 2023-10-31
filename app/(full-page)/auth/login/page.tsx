@@ -25,13 +25,13 @@ const LoginPage = () => {
     const [checked, setChecked] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
-    const { cmd, setCmd, setUid, setSid } = useApiStore();
+    const { cmd, setUid, setSid } = useApiStore();
     const router = useRouter();
     const baseUrl = ASSETS_BASE_PATH
 
     const handleLogin = async () => {
-        setCmd(`com.awspaas.user.apps.app20231017165850.login`)
-        const url = `${API_BASE_URL}?cmd=${cmd}&userAccount=${username}&passWord=${password}`
+        const loginCmd = `${cmd}.login`
+        const url = `${API_BASE_URL}?cmd=${loginCmd}&userAccount=${username}&passWord=${password}`
         const res = await fetch(url, {
             method: 'POST',
         })
