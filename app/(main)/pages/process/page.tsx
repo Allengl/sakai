@@ -1,7 +1,5 @@
 'use client'
-import { Card } from 'primereact/card';
 import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
 import { Menubar } from 'primereact/menubar';
 import React, { useEffect } from 'react'
 import { API_BASE_URL } from '../../../../constants/constants';
@@ -9,12 +7,19 @@ import { DataTable } from 'primereact/datatable';
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
+import { Tag } from 'primereact/tag';
 
 
 const ProcessPage = () => {
   const [todoData, setTodoData] = React.useState([])
   const [taskTitle, setTaskTitle] = React.useState('待办任务')
   const router = useRouter()
+
+
+
+  const statusBodyTemplate = (rowData) => {
+    return <Tag value={rowData.STATUS} severity={getSeverity(rowData.STATUS)}></Tag>;
+};
 
 
   const nestedMenuitems = [
@@ -63,7 +68,8 @@ const ProcessPage = () => {
   ) => {
     const sid = localStorage.getItem('sid')
     const cmd = `com.awspaas.user.apps.app20231017165850.${type}`
-    const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}`;
+    const uid = localStorage.getItem('uid')
+    const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}&uid=${uid}`;
 
     const res = await fetch(url, {
       method: 'POST',

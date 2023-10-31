@@ -3,8 +3,8 @@
   "version": "10.1.0-SNAPSHOT",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "NODE_ENV=development && next dev",
+    "build": "NODE_ENV=production && next build",
     "start": "next start",
     "format": "prettier --write \"{components,app,service,api-generator}/**/*.{js,ts,tsx,d.ts}\"",
     "lint": "next lint"

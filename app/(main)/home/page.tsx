@@ -144,7 +144,8 @@ const Dashboard = () => {
     ) => {
         const sid = localStorage.getItem('sid')
         const cmd = `com.awspaas.user.apps.app20231017165850.${type}`
-        const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}`;
+        const uid = localStorage.getItem('uid')
+        const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}&uid=${uid}`;
 
         const res = await fetch(url, {
             method: 'POST',

@@ -1,5 +1,5 @@
 import React, { FC, use, useEffect, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, set, useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Panel } from 'primereact/panel';
@@ -227,7 +227,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       )
     }
     if (comment === '办理') {
-      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskInstId=${taskInstId}`, {
+      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskid=${taskInstId}`, {
         method: 'POST',
       })
     }
@@ -268,6 +268,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
         method: 'POST',
       }).then(res => res.json()).then(data => {
         console.log(data);
+        localStorage.setItem('processInstId', data.BINDID);
         reset({
           DOCUMENT_NUM: data.DOCUMENT_NUM,
           OBJECT_NUM: data.OBJECT_NUM,
@@ -705,6 +706,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                   onClick={() => {
                     handelApprove(msg, '提交')
                     toast.current.show({ severity: 'success', summary: '提交成功' });
+                    setTimeout(() => {
+                      router.push('/pages/invoice')
+                    }, 1000)
                   }}
                   label="同意" outlined severity="success" icon="pi pi-check" />
                 <Button
@@ -747,7 +751,6 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               type="submit" severity="info" icon="pi pi-save" />
             <Button label="提交" onClick={() => {
               startProcess()
-
             }} severity="success" icon="pi pi-check" />
           </>
         )}

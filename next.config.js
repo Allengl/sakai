@@ -2,7 +2,7 @@
 
 let nextConfig = {};
 
-if (process.env.NEXT_PUBLIC_MY_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   nextConfig = {
     output: 'export',
     distDir: 'dists/portal/apps/com.awspaas.user.apps.app20231017165850',
