@@ -8,7 +8,7 @@ import { Menu } from 'primereact/menu';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 import { ChartData, ChartOptions } from 'chart.js';
-import {API_BASE_URL} from '../../../constants/constants';
+import { API_BASE_URL } from '../../../constants/constants';
 import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 import { useApiStore } from '../../stores/useApiStore';
@@ -123,11 +123,8 @@ const Dashboard = () => {
 
 
     const getInvoice = async () => {
-        const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormList'
-
-        const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}`, {
-            method: 'POST',
-        })
+        const queryFormListCmd = `${cmd}.queryFormList`
+        const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${queryFormListCmd}&sid=${sid}`, { method: 'POST', })
         const data = await res.json()
         console.log(data);
         setInvoiceData(data)
@@ -140,19 +137,14 @@ const Dashboard = () => {
         | 'queryAlreadyDoTask'
         | 'queryAlreadyReadTask'
     ) => {
-        const sid = localStorage.getItem('sid')
-        const cmd = `com.awspaas.user.apps.app20231017165850.${type}`
-        const uid = localStorage.getItem('uid')
-        const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}&uid=${uid}`;
-
-        const res = await fetch(url, {
-            method: 'POST',
-        })
-
+        const queryTaskCmd = `${cmd}.${type}`
+        const url = `${API_BASE_URL}?sid=${sid}&cmd=${queryTaskCmd}&uid=${uid}`;
+        const res = await fetch(url, { method: 'POST' })
         const data = await res.json()
         return data.length
 
     }
+
     const getTasksNumber = async () => {
         const queryTodoTask = await queryTask('queryTodoTask')
         const queryToReadTask = await queryTask('queryToReadTask')
@@ -166,6 +158,8 @@ const Dashboard = () => {
             queryAlreadyReadTask,
         })
     }
+
+    
     useEffect(() => {
         getTasksNumber()
         getInvoice()
