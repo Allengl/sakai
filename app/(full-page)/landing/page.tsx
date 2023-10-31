@@ -10,6 +10,7 @@ import { Divider } from 'primereact/divider';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 import { NodeRef } from '../../../types/types';
 import { classNames } from 'primereact/utils';
+import { ASSETS_BASE_PATH } from '../../../constants/constants';
 
 const LandingPage = () => {
     const [isHidden, setIsHidden] = useState(false);
@@ -20,7 +21,7 @@ const LandingPage = () => {
         setIsHidden((prevState) => !prevState);
     };
 
-    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+    const baseUrl = ASSETS_BASE_PATH
 
 
     return (

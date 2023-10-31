@@ -10,7 +10,7 @@ import { ProductService } from '../../../demo/service/ProductService';
 import { LayoutContext } from '../../../layout/context/layoutcontext';
 import { Demo } from '../../../types/types';
 import { ChartData, ChartOptions } from 'chart.js';
-import API_BASE_URL from '../../../constants/apiConfig';
+import API_BASE_URL from '../../../constants/constants';
 import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 

@@ -12,7 +12,7 @@ import { useRouter } from 'next/navigation';
 import React, { use, useEffect, useRef, useState } from 'react';
 import type { Demo } from '../../../../types/types';
 import { Dialog } from 'primereact/dialog';
-import API_BASE_URL from '../../../../constants/apiConfig';
+import API_BASE_URL from '../../../../constants/constants';
 import { Tag } from 'primereact/tag';
 import { Dropdown, DropdownChangeEvent } from 'primereact/dropdown';
 

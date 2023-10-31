@@ -9,6 +9,7 @@ import { classNames } from 'primereact/utils';
 import React, { useContext, useEffect, useState } from 'react';
 import { AppConfigProps, LayoutConfig, LayoutState } from '../types/types';
 import { LayoutContext } from './context/layoutcontext';
+import { ASSETS_BASE_PATH } from '../constants/constants';
 
 const AppConfig = (props: AppConfigProps) => {
     const [scales] = useState([12, 13, 14, 15, 16]);
@@ -54,7 +55,7 @@ const AppConfig = (props: AppConfigProps) => {
         document.documentElement.style.fontSize = layoutConfig.scale + 'px';
     };
 
-    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+    const baseUrl = ASSETS_BASE_PATH;
 
 
     useEffect(() => {

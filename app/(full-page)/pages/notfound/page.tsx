@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
+import { ASSETS_BASE_PATH } from '../../../../constants/constants';
 
-const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+const baseUrl = ASSETS_BASE_PATH
 
 
 const NotFoundPage = () => {

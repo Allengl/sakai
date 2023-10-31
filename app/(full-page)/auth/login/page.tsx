@@ -8,6 +8,7 @@ import { Password } from 'primereact/password';
 import { LayoutContext } from '../../../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
+import { ASSETS_BASE_PATH } from '../../../../constants/constants';
 
 
 interface LoginResponse {
@@ -46,7 +47,7 @@ const LoginPage = () => {
         }
     }
 
-    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+    const baseUrl = ASSETS_BASE_PATH
 
 
     return (

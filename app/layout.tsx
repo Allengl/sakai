@@ -6,7 +6,7 @@ import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import '../styles/layout/layout.scss';
 import '../styles/demo/Demos.scss';
-import { useEffect } from 'react';
+import { ASSETS_BASE_PATH } from '../constants/constants'
 
 
 interface RootLayoutProps {
@@ -14,7 +14,7 @@ interface RootLayoutProps {
 }
 
 export default function RootLayout({ children }: RootLayoutProps) {
-    const baseUrl = '/portal/apps/com.awspaas.user.apps.app20231017165850'
+    const baseUrl = ASSETS_BASE_PATH
 
     return (
         <html lang="en" suppressHydrationWarning>
