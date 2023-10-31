@@ -8,47 +8,43 @@ import { Password } from 'primereact/password';
 import { LayoutContext } from '../../../../layout/context/layoutcontext';
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
-import { ASSETS_BASE_PATH } from '../../../../constants/constants';
+import { API_BASE_URL, ASSETS_BASE_PATH } from '../../../../constants/constants';
+import { useApiStore } from '../../../stores/useApiStore';
 
 
 interface LoginResponse {
     result: string;
     data: {
         sid: string;
-    }
-    // 可能还有其他属性
+    }    // 可能还有其他属性
 }
-
 
 const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [checked, setChecked] = useState(false);
     const { layoutConfig } = useContext(LayoutContext);
-
-    const router = useRouter();
     const containerClassName = classNames('surface-ground flex align-items-center justify-content-center min-h-screen min-w-screen overflow-hidden', { 'p-input-filled': layoutConfig.inputStyle === 'filled' });
-
+    const { cmd, setCmd, setUid, setSid } = useApiStore();
+    const router = useRouter();
+    const baseUrl = ASSETS_BASE_PATH
 
     const handleLogin = async () => {
-        const cmd = 'com.awspaas.user.apps.app20231017165850.login'
-        const url = `http://localhost:8088/portal/r/jd?cmd=${cmd}&userAccount=${username}&passWord=${password}`
-
+        setCmd(`com.awspaas.user.apps.app20231017165850.login`)
+        const url = `${API_BASE_URL}?cmd=${cmd}&userAccount=${username}&passWord=${password}`
         const res = await fetch(url, {
             method: 'POST',
         })
         const data: LoginResponse = await res.json()
         console.log(data)
-
         if (data.result === 'ok') {
             localStorage.setItem('uid', username)
+            setUid(username)
             localStorage.setItem('sid', data.data.sid)
+            setSid(data.data.sid)
             router.push('/home')
         }
     }
-
-    const baseUrl = ASSETS_BASE_PATH
-
 
     return (
         <div className={containerClassName}>
