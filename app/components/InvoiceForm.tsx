@@ -17,7 +17,6 @@ import { Sidebar } from 'primereact/sidebar';
 
 interface InvoiceFormProps {
   pageType: 'new' | 'edit' | 'approve'
-  onSubmit: () => void
 }
 
 interface WBS {
@@ -34,7 +33,7 @@ interface WBS {
   TYPE: string,
 }
 
-const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
+const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   const toast = useRef(null);
   const router = useRouter();
   const [WBSDialogVisible, setWBSDialogVisible] = React.useState(false);
@@ -56,11 +55,11 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
 
 
   const show = () => {
-    toast.current.show({ severity: 'success', summary: '提交成功', detail: getValues('DOCUMENT_NUM') });
+    toast.current.show({ severity: 'success', summary: '保存成功', detail: getValues('DOCUMENT_NUM') });
   };
 
   const show1 = () => {
-    toast.current.show({ severity: 'success', summary: '更新成功', detail: getValues('DOCUMENT_NUM') });
+    toast.current.show({ severity: 'success', summary: '修改成功', detail: getValues('DOCUMENT_NUM') });
   };
 
   const defaultValues = {
@@ -112,7 +111,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
       show();
       localStorage.setItem('boid', result.data);
       setTimeout(() => {
-        router.push(`/pages/invoice/${result.data}`);
+        router.push(`/pages/invoice/edit?id=${result.data}`);
       }, 1000)
       getInvoiceDetail();
     }
@@ -214,29 +213,27 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
 
     const url = `${API_BASE_URL}?cmd=${cmd}&sid=${sid}&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=${openState}&currentPage=${currentPage}&formDefId=${formDefId}&formData=${formData}&boId=${boId}&boDefId=${boDefId}&oldFormData=${oldFormData}&idCreate=${idCreate}&isTransact=${isTransact}&isValidateForm=${isValidateForm}&commentInfo=${JSON.stringify(commentInfo)}&isNew=${isNew}`;
 
- if(comment === '提交' || comment === '拒绝') {
-    const response = await fetch(url, {
-      method: 'POST',
-    });
-    const data = await response.json();
-    // router.push('/pages/invoice')
-    console.log(data);
+    if (comment === '提交' || comment === '拒绝') {
+      const response = await fetch(url, {
+        method: 'POST',
+      });
+      const data = await response.json();
+      // router.push('/pages/invoice')
+      console.log(data);
       const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`,
         {
           method: 'POST',
         }
       )
- }
+    }
     if (comment === '办理') {
-      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskInstId=${taskInstId}`,{
+      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskInstId=${taskInstId}`, {
         method: 'POST',
       })
     }
     if (comment === '作废') {
       await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`)
     }
-
-
 
   }
 
@@ -308,7 +305,6 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
-      show();
       reset();
       // router.push('/pages/invoice');
     }
@@ -708,11 +704,14 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
                 <Button
                   onClick={() => {
                     handelApprove(msg, '提交')
+                    toast.current.show({ severity: 'success', summary: '提交成功' });
                   }}
                   label="同意" outlined severity="success" icon="pi pi-check" />
                 <Button
                   onClick={() => {
                     handelApprove(msg, '拒绝')
+                    toast.current.show({ severity: 'danger', summary: '已拒绝' });
+
                   }}
                   label="拒绝" outlined severity="danger" icon="pi pi-times" />
               </>
@@ -721,10 +720,12 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
                 <Button
                   onClick={() => {
                     handelApprove('', '办理')
+                    toast.current.show({ severity: 'success', summary: '办理成功' });
                   }}
                   label="办理" outlined severity="success" icon="pi pi-check" />
                 <Button
                   onClick={() => {
+                    toast.current.show({ severity: 'danger', summary: '已作废' });
                     handelApprove(msg, '作废')
                   }}
                   label="作废" outlined severity="danger" icon="pi pi-times" />
@@ -744,7 +745,10 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType, onSubmit }) => {
               handleSubmit(onSubmit1)
             }
               type="submit" severity="info" icon="pi pi-save" />
-            <Button label="提交" onClick={startProcess} severity="success" icon="pi pi-check" />
+            <Button label="提交" onClick={() => {
+              startProcess()
+
+            }} severity="success" icon="pi pi-check" />
           </>
         )}
       </div>

@@ -148,13 +148,14 @@ const InvoicePage = () => {
                         type="button" severity="info" icon="pi pi-file" label="编辑" outlined
                         onClick={() => {
                             console.log(selectedProduct);
-                            router.push(`/pages/invoice/${selectedProduct?.ID}`)
+                            router.push(`/pages/invoice/edit?id=${selectedProduct?.ID}`)
                         }}
                     />
                     <Button className="m-1" disabled={!selectedProduct}
                         type="button" severity="help" icon="pi pi-file-edit" label="审批记录" outlined onClick={
                             () => {
-                                router.push(`/pages/invoice/approve/${selectedProduct?.ID}`)
+                                localStorage.setItem('boid', selectedProduct.ID)
+                                router.push(`/pages/invoice/approve?id=${selectedProduct?.ID}`)
                             }
                         } />
                 </div>

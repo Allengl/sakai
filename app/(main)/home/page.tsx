@@ -253,7 +253,8 @@ const Dashboard = () => {
                                 <>
                                     <Button icon="pi pi-search" text
                                         onClick={() => {
-                                            router.push(`/pages/invoice/approve/${row.ID}/`)
+                                            localStorage.setItem('boid', row.ID)
+                                            router.push(`/pages/invoice/approve?id=${row.ID}`)
                                         }}
                                     />
                                 </>
@@ -261,7 +262,7 @@ const Dashboard = () => {
                         />
                     </DataTable>
                 </div>
-                <div className="card">
+                {/* <div className="card">
                     <div className="flex justify-content-between align-items-center mb-5">
                         <h5>Best Selling Products</h5>
                         <div>
@@ -350,7 +351,7 @@ const Dashboard = () => {
                             </div>
                         </li>
                     </ul>
-                </div>
+                </div> */}
             </div>
 
             <div className="col-12 xl:col-6">

@@ -6,7 +6,7 @@ const EditInvoicePage = () => {
   return (
     <div className='edit'>
       <h5>编辑项目费用单</h5>
-      <InvoiceForm pageType='edit' onSubmit={() => { }} />
+      <InvoiceForm pageType='edit'  />
     </div>
 
   )

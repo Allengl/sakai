@@ -125,7 +125,7 @@ const ProcessPage = () => {
                       console.log(row)
                       localStorage.setItem('taskInstId', row.id)
                       localStorage.setItem('processInstId', row.processInstId)
-                      router.push(`/pages/invoice/approve/9b11af65-4f5f-41f8-8145-85f66f2b321d/`)
+                      router.push(`/pages/invoice/approve?targetRoleId=${row.targetRoleId}`)
                     }}
                     icon="pi pi-search" text
                   />
