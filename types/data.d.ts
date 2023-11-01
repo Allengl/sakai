@@ -25,3 +25,14 @@ export interface Wbs {
   PLANER_NAME: string,
   TYPE: string,
 }
+
+interface Todo {
+  id: string,
+  title: string,
+  target: string,
+  targetRoleId: string,
+  activityType: string,
+  beginTime: string,
+  remindTimes: string,
+  processInstId: string,
+}

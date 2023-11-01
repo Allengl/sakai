@@ -14,8 +14,9 @@ import { v4 as uuidv4, v5 as uuidv5, validate as uuidValidate } from 'uuid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Sidebar } from 'primereact/sidebar';
 import { Wbs } from '../../types/data';
-import { get } from 'https';
 import { removeUndifinedKeys } from '../../lib/utils';
+import { useApiStore } from '../stores/useApiStore';
+import { useDataStore } from '../stores/useDataStore';
 
 
 interface InvoiceFormProps {
@@ -25,22 +26,21 @@ interface InvoiceFormProps {
 interface Show {
   severity: "success" | "info" | "warn" | "error" | undefined,
   summary: string,
-  detail?: React.ReactNode
+  detail?: React.ReactNode,
+  life?: number
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   const toast = useRef<Toast>(null);
   const router = useRouter();
   const [WBSDialogVisible, setWBSDialogVisible] = React.useState(false);
-  const [wbsData, setWbsData] = React.useState([]);
   const [selectedWbs, setSelectedWbs] = useState<Wbs>();
   const [invoiceDetail, setInvoiceDetail] = useState<any>({});
   const [msg, setMsg] = useState('');
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const sid = localStorage.getItem('sid');
-  const processInstId = localStorage.getItem('processInstId');
-  const taskInstId = localStorage.getItem('taskInstId');
   const [showButton, setShowButton] = useState(false);
+  const { cmd, uid, sid, boid, processInstId, taskInstId, setCmd, setUid, setSid, setBoid, setProcessInstId, setTaskInstId } = useApiStore();
+  const { invoiceData, wbsData, setInvoiceData, setWbsData } = useDataStore();
 
   const newUrl = `http://localhost:8088/portal/r/w?&sid=${sid}&cmd=CLIENT_BPM_FORM_TRACK_OPEN&processInstId=${processInstId}&formInfo=`;
 
@@ -52,11 +52,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     toast.current?.show({ severity: 'success', summary: '保存成功', detail: getValues('DOCUMENT_NUM') });
   };
 
-  const show1 = ({
-    severity = 'success',
-    summary = '保存成功',
-    detail,
-  }: Show) => {
+  const show1 = ({ severity = 'success', summary = '保存成功', detail, }: Show) => {
     toast.current?.show({ severity, summary, detail });
   };
 
@@ -95,19 +91,16 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
       .join('&');
-    const sid = localStorage.getItem('sid');
-    const cmd = 'com.awspaas.user.apps.app20231017165850.createForm'
-    const uid = localStorage.getItem('uid');
-    const url = `${API_BASE_URL}?&uid=${uid}&cmd=${cmd}&sid=${sid}&${queryParams}`;
-    const response = await fetch(url, {
-      method: 'POST',
-    });
+    const createFormCmd = `${cmd}.createForm`
+    const url = `${API_BASE_URL}?&uid=${uid}&cmd=${createFormCmd}&sid=${sid}&${queryParams}`;
+    const response = await fetch(url, { method: 'POST' });
 
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
       show();
       localStorage.setItem('boid', result.data);
+      setBoid(result.data);
       setTimeout(() => {
         router.push(`/pages/invoice/edit?id=${result.data}`);
       }, 1000)
@@ -116,13 +109,10 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   }
 
   const getInvoiceDetail = async () => {
-    const sid = localStorage.getItem('sid')
-    const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormDetail'
-    const boid = localStorage.getItem('boid')
-    const res = await fetch(`${API_BASE_URL}?cmd=${cmd}&sid=${sid}&boid=${boid}`)
+    const queryFormDetailCmd = `${cmd}.queryFormDetail`
+    const res = await fetch(`${API_BASE_URL}?cmd=${queryFormDetailCmd}&sid=${sid}&boid=${boid}`)
     const data = await res.json()
     console.log(data)
-
     setInvoiceDetail(data)
   }
 
@@ -132,15 +122,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
       .join('&');
-    const sid = localStorage.getItem('sid');
-    const cmd = 'com.awspaas.user.apps.app20231017165850.updateForm'
-    const uid = localStorage.getItem('uid');
-    const boid = localStorage.getItem('boid');
-    const url = `${API_BASE_URL}?${uid}&cmd=${cmd}&sid=${sid}&${queryParams}&ID=${boid}`;
-    const response = await fetch(url, {
-      method: 'POST',
-    });
-
+    const updateFormCmd = `${cmd}.updateForm`
+    const url = `${API_BASE_URL}?${uid}&cmd=${updateFormCmd}&sid=${sid}&${queryParams}&ID=${boid}`;
+    const response = await fetch(url, { method: 'POST' });
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
@@ -150,20 +134,16 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   }
 
   const getWbsData = async () => {
-    const sid = localStorage.getItem('sid');
-    const cmd = 'com.awspaas.user.apps.app20231017165850.queryWBSList'
-    const url = `${API_BASE_URL}?cmd=${cmd}&sid=${sid}`;
-    const response = await fetch(url, {
-      method: 'POST',
-    });
-
+    const queryWBSListCmd = `${cmd}.queryWBSList`
+    const url = `${API_BASE_URL}?cmd=${queryWBSListCmd}&sid=${sid}`;
+    const response = await fetch(url, { method: 'POST' });
     const result = await response.json();
     console.log(result);
     setWbsData(result);
   }
 
 
-  const onSubmit1 = (data: object) => {
+  const onSubmit = (data: object) => {
     removeUndifinedKeys(data);
     console.log(data);
     const newData = {
@@ -174,17 +154,12 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     if (pageType === 'new') {
       createInvoice(newData)
     } else if (pageType === 'edit') {
-      // 如果是编辑页面，那么就调用编辑接口
       updateInvoice(newData)
     }
   }
 
   const handelApprove = async (msg: string, comment: string) => {
-    const sid = localStorage.getItem('sid');
     const cmd = 'CLIENT_BPM_FORM_PAGE_P_SAVE_DATA'
-    const uid = localStorage.getItem('uid');
-    const processInstId = localStorage.getItem('processInstId');
-    const taskInstId = localStorage.getItem('taskInstId');
     const openState = 1
     const currentPage = 1
     const formDefId = ''
@@ -206,25 +181,18 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     const url = `${API_BASE_URL}?cmd=${cmd}&sid=${sid}&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=${openState}&currentPage=${currentPage}&formDefId=${formDefId}&formData=${formData}&boId=${boId}&boDefId=${boDefId}&oldFormData=${oldFormData}&idCreate=${idCreate}&isTransact=${isTransact}&isValidateForm=${isValidateForm}&commentInfo=${JSON.stringify(commentInfo)}&isNew=${isNew}`;
 
     if (comment === '提交' || comment === '拒绝') {
-      const response = await fetch(url, {
-        method: 'POST',
-      });
+      const response = await fetch(url, { method: 'POST' });
       const data = await response.json();
       // router.push('/pages/invoice')
       console.log(data);
-      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`,
-        {
-          method: 'POST',
-        }
+      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`, { method: 'POST' }
       )
     }
     if (comment === '办理') {
-      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskid=${taskInstId}`, {
-        method: 'POST',
-      })
+      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskid=${taskInstId}`, { method: 'POST' })
     }
     if (comment === '作废') {
-      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`)
+      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`, { method: 'POST' })
     }
 
   }
@@ -255,15 +223,11 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
     getWbsData()
     if (pageType === 'edit' || pageType === 'approve') {
-      const boid = localStorage.getItem('boid');
-      const sid = localStorage.getItem('sid');
-      const cmd = 'com.awspaas.user.apps.app20231017165850.queryFormDetail'
-      const url = `${API_BASE_URL}?cmd=${cmd}&sid=${sid}&boid=${boid}`;
-      fetch(url, {
-        method: 'POST',
-      }).then(res => res.json()).then(data => {
+      const queryFormDetailCmd = `${cmd}.queryFormDetail`
+      const url = `${API_BASE_URL}?cmd=${queryFormDetailCmd}&sid=${sid}&boid=${boid}`;
+      fetch(url, { method: 'POST' }).then(res => res.json()).then(data => {
         console.log(data);
-        localStorage.setItem('processInstId', data.BINDID);
+        setProcessInstId(data.BINDID);
         reset({
           DOCUMENT_NUM: data.DOCUMENT_NUM,
           OBJECT_NUM: data.OBJECT_NUM,
@@ -288,16 +252,10 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
 
   const startProcess = async () => {
-    const sid = localStorage.getItem('sid');
-    const cmd = 'com.awspaas.user.apps.app20231017165850.startProcess'
-    const uid = localStorage.getItem('uid');
-    const boid = localStorage.getItem('boid');
+    const startProcessCmd = `${cmd}.startProcess`
     const processDefId = 'obj_e9a85bafeeba49e2aa079b00ae93eefa'
-    const url = `${API_BASE_URL}?uid=${uid}&cmd=${cmd}&sid=${sid}&boid=${boid}&processDefId=${processDefId}`;
-    const response = await fetch(url, {
-      method: 'POST',
-    });
-
+    const url = `${API_BASE_URL}?uid=${uid}&cmd=${startProcessCmd}&sid=${sid}&boid=${boid}&processDefId=${processDefId}`;
+    const response = await fetch(url, { method: 'POST' });
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
@@ -309,7 +267,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
 
   return (
-    <form onSubmit={handleSubmit(onSubmit1)} className="flex flex-column gap-2">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-column gap-2">
       <Toast ref={toast} />
       <Panel header="项目信息">
         <div className="p-fluid formgrid grid">
@@ -380,6 +338,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                 disabled={formDisabled}
                 icon="pi pi-search" rounded text raised severity="success" aria-label="Search"
                 onClick={showWBSDialog}
+                type='button'
               />
             </div>
           </div>
@@ -618,7 +577,13 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
           <div className="field col-12 md:col-1">
             <div className='flex items-center my-4'>
               <label>&nbsp;</label>
-              <Button icon="pi pi-search" rounded text raised severity="success" aria-label="Search" />
+              <Button
+                onClick={showWBSDialog}
+                type='button'
+                disabled={formDisabled}
+                icon="pi pi-search"
+                rounded text raised severity="success"
+                aria-label="Search" />
             </div>
           </div>
           <div className="field col-12 md:col-4">
@@ -698,6 +663,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             {showButton ? (
               <>
                 <Button
+                  type='button'
                   onClick={() => {
                     handelApprove(msg, '提交')
                     toast.current?.show({ severity: 'success', summary: '提交成功' });
@@ -707,6 +673,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                   }}
                   label="同意" outlined severity="success" icon="pi pi-check" />
                 <Button
+                  type='button'
                   onClick={() => {
                     handelApprove(msg, '拒绝')
                     toast.current?.show({ severity: 'error', summary: '已拒绝' });
@@ -741,7 +708,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
         {(pageType === 'edit' || pageType === 'new') && (
           <>
             <Button label="保存" onClick={
-              handleSubmit(onSubmit1)
+              handleSubmit(onSubmit)
             }
               type="submit" severity="info" icon="pi pi-save" />
             <Button label="提交" onClick={() => {
@@ -819,8 +786,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       <Sidebar visible={sidebarVisible} position="right"
         className='w-8'
         onHide={() => setSidebarVisible(false)}>
-        <iframe src={newUrl} className='w-full h-full'
-        ></iframe>
+        <iframe src={newUrl} className='w-full h-full' />
       </Sidebar>
     </form >
   );

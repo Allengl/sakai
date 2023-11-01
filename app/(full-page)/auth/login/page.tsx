@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 'use client';
 import { useRouter } from 'next/navigation';
-import React, { useContext, useState } from 'react';
+import React, { use, useContext, useEffect, useState } from 'react';
 import { Checkbox } from 'primereact/checkbox';
 import { Button } from 'primereact/button';
 import { Password } from 'primereact/password';
@@ -32,9 +32,7 @@ const LoginPage = () => {
     const handleLogin = async () => {
         const loginCmd = `${cmd}.login`
         const url = `${API_BASE_URL}?cmd=${loginCmd}&userAccount=${username}&passWord=${password}`
-        const res = await fetch(url, {
-            method: 'POST',
-        })
+        const res = await fetch(url, { method: 'POST' })
         const data: LoginResponse = await res.json()
         console.log(data)
         if (data.result === 'ok') {

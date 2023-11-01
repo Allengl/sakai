@@ -1,26 +1,15 @@
 'use client'
 import { Column } from 'primereact/column';
 import { Menubar } from 'primereact/menubar';
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { API_BASE_URL } from '../../../../constants/constants';
 import { DataTable } from 'primereact/datatable';
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
 import { useRouter } from 'next/navigation';
-import { Tag } from 'primereact/tag';
-
-
-
-interface TodoData {
-  id: string,
-  title: string,
-  target: string,
-  targetRoleId: string,
-  activityType: string,
-  beginTime: string,
-  remindTimes: string,
-  processInstId: string,
-}
+import { useApiStore } from '../../../stores/useApiStore';
+import { Todo } from '../../../../types/data';
+import { useDataStore } from '../../../stores/useDataStore';
 
 interface TaskTitleMap {
   '待办任务': string
@@ -32,8 +21,9 @@ interface TaskTitleMap {
 type TaskTitle = keyof TaskTitleMap
 
 const ProcessPage = () => {
-  const [todoData, setTodoData] = React.useState([])
-  const [taskTitle, setTaskTitle] = React.useState<TaskTitle>('待办任务')
+  const { sid, uid, cmd, taskInstId, processInstId, setTaskInstId, setProcessInstId } = useApiStore()
+  const { todoData, setTodoData } = useDataStore()
+  const [taskTitle, setTaskTitle] = useState<TaskTitle>('待办任务')
   const router = useRouter()
 
 
@@ -42,27 +32,17 @@ const ProcessPage = () => {
       label: '待办任务',
       icon: 'pi pi-fw pi-file',
       active: true,
-      command: () => {
-        console.log('待办任务');
-        setTaskTitle('待办任务')
-      }
-
+      command: () => { setTaskTitle('待办任务') }
     },
     {
       label: '待阅任务',
       icon: 'pi pi-fw pi-pencil',
-      command: () => {
-        console.log('待阅任务');
-        setTaskTitle('待阅任务')
-      }
+      command: () => { setTaskTitle('待阅任务') }
     },
     {
       label: '已办任务',
       icon: 'pi pi-fw pi-calendar',
-      command: () => {
-        console.log('已办任务');
-        setTaskTitle('已办任务')
-      }
+      command: () => { setTaskTitle('已办任务') }
     },
     {
       label: '已阅任务',
@@ -76,15 +56,9 @@ const ProcessPage = () => {
 
 
   const queryTask = async (type: string) => {
-    const sid = localStorage.getItem('sid')
-    const cmd = `com.awspaas.user.apps.app20231017165850.${type}`
-    const uid = localStorage.getItem('uid')
-    const url = `${API_BASE_URL}?sid=${sid}&cmd=${cmd}&uid=${uid}`;
-
-    const res = await fetch(url, {
-      method: 'POST',
-    })
-
+    const queryTaskCmd = `${cmd}.queryTask`
+    const url = `${API_BASE_URL}?sid=${sid}&cmd=${queryTaskCmd}&uid=${uid}`;
+    const res = await fetch(url, { method: 'POST' })
     const data = await res.json()
     console.log(data);
     setTodoData(data)
@@ -139,8 +113,8 @@ const ProcessPage = () => {
                   <Button
                     onClick={() => {
                       console.log(row)
-                      localStorage.setItem('taskInstId', row.id)
-                      localStorage.setItem('processInstId', row.processInstId)
+                      setTaskInstId(row.id)
+                      setProcessInstId(row.processInstId)
                       router.push(`/pages/invoice/approve?targetRoleId=${row.targetRoleId}`)
                     }}
                     icon="pi pi-search" text

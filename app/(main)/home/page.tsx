@@ -13,6 +13,7 @@ import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 import { useApiStore } from '../../stores/useApiStore';
 import { Invoice } from '../../../types/data';
+import { useDataStore } from '../../stores/useDataStore';
 
 const lineData: ChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -44,7 +45,7 @@ type TasksNumber = {
 }
 
 const Dashboard = () => {
-    const { cmd, uid, sid, setCmd, setUid, setSid } = useApiStore();
+    const { cmd, uid, boid, sid, setBoid } = useApiStore();
     const menu1 = useRef<Menu>(null);
     const menu2 = useRef<Menu>(null);
     const [lineOptions, setLineOptions] = useState<ChartOptions>({});
@@ -55,7 +56,7 @@ const Dashboard = () => {
         queryAlreadyDoTask: 0,
         queryAlreadyReadTask: 0,
     })
-    const [invoiceData, setInvoiceData] = useState();
+    const { invoiceData, setInvoiceData } = useDataStore();
     const router = useRouter()
 
     const applyLightTheme = () => {
@@ -128,7 +129,12 @@ const Dashboard = () => {
         const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${queryFormListCmd}&sid=${sid}`, { method: 'POST', })
         const data = await res.json()
         console.log(data);
-        setInvoiceData(data)
+        // setInvoiceData(data)
+        if (data && data.result === "error") {
+            router.push('/auth/access')
+        } else {
+            setInvoiceData(data)
+        }
     }
 
 
@@ -282,13 +288,13 @@ const Dashboard = () => {
                         <Column field="OBJECT_NAME" header="对象描述" sortable style={{ width: '35%' }} body={(data) => formatCurrency(data.price)} />
                         <Column field="STATUS" header="状态" body={statusBodyTemplate} style={{ width: '10%' }}></Column>
                         <Column
-                            header="View"
+                            header="详情"
                             style={{ width: '15%' }}
                             body={(row) => (
                                 <>
                                     <Button icon="pi pi-search" text
                                         onClick={() => {
-                                            localStorage.setItem('boid', row.ID)
+                                            setBoid(row.ID)
                                             router.push(`/pages/invoice/approve?id=${row.ID}`)
                                         }}
                                     />

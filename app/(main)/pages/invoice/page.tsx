@@ -35,11 +35,11 @@ const InvoicePage = () => {
     const [globalFilterValue1, setGlobalFilterValue1] = useState('');
     const [selectedProduct, setSelectedProduct] = useState<Invoice>(null as any)
     const [deleteProductDialog, setDeleteProductDialog] = useState<boolean>(false);
-    const toast = useRef<Toast>(null);
-    const router = useRouter();
-    const { cmd, uid, sid, setCmd, setUid, setSid } = useApiStore();
+    const { cmd, uid, sid, boid, setCmd, setBoid } = useApiStore();
     const { invoiceData, setInvoiceData } = useDataStore();
     const [statuses] = useState<string[]>(['INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK']);
+    const toast = useRef<Toast>(null);
+    const router = useRouter();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
@@ -66,11 +66,10 @@ const InvoicePage = () => {
     const deleteInvoice = async () => {
         const removeFormCmd = `${cmd}.removeForm`
         const boid = selectedProduct!.ID
-        const res = await fetch(`${API_BASE_URL}?cmd=${removeFormCmd}&sid=${sid}&boid=${boid}`, {
-            method: 'POST',
-        })
+        const res = await fetch(`${API_BASE_URL}?cmd=${removeFormCmd}&sid=${sid}&boid=${boid}`, { method: 'POST' })
         const data = await res.json()
         console.log(data);
+        toast.current?.show({ severity: 'success', summary: '成功', detail: '删除成功!', life: 3000 });
     }
 
 
@@ -80,7 +79,6 @@ const InvoicePage = () => {
         setInvoiceData(_invoiceData);
         setDeleteProductDialog(false);
         setProduct(emptyProduct);
-        toast.current?.show({ severity: 'success', summary: '成功', detail: '删除成功!', life: 3000 });
         setSelectedProduct(null as any)
         deleteInvoice();
     };
@@ -126,6 +124,7 @@ const InvoicePage = () => {
                         type="button" severity="info" icon="pi pi-file" label="编辑" outlined
                         onClick={() => {
                             console.log(selectedProduct);
+                            setBoid(selectedProduct?.ID)
                             router.push(`/pages/invoice/edit?id=${selectedProduct?.ID}`)
                         }}
                     />
