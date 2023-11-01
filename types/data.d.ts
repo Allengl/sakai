@@ -11,3 +11,17 @@ export interface Invoice {
   TYPE: string,
   PLANER_NAME: string
 }
+
+export interface Wbs {
+  ID: string,
+  TOPIC_NUM: string,
+  WBS_ELEMENT: string,
+  MATERIAL_NUM: string,
+  BOOK_NAME: string,
+  CHIEF: string,
+  PLANER_NUM: string,
+  DEPT_NAME: string,
+  DEPT_NUM: string,
+  PLANER_NAME: string,
+  TYPE: string,
+}

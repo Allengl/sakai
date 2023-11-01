@@ -13,36 +13,30 @@ import { Column } from 'primereact/column';
 import { v4 as uuidv4, v5 as uuidv5, validate as uuidValidate } from 'uuid';
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Sidebar } from 'primereact/sidebar';
+import { Wbs } from '../../types/data';
+import { get } from 'https';
+import { removeUndifinedKeys } from '../../lib/utils';
 
 
 interface InvoiceFormProps {
   pageType: 'new' | 'edit' | 'approve'
 }
 
-interface WBS {
-  ID: string,
-  TOPIC_NUM: string,
-  WBS_ELEMENT: string,
-  MATERIAL_NUM: string,
-  BOOK_NAME: string,
-  CHIEF: string,
-  PLANER_NUM: string,
-  DEPT_NAME: string,
-  DEPT_NUM: string,
-  PLANER_NAME: string,
-  TYPE: string,
+interface Show {
+  severity: "success" | "info" | "warn" | "error" | undefined,
+  summary: string,
+  detail?: React.ReactNode
 }
 
 const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
-  const toast = useRef(null);
+  const toast = useRef<Toast>(null);
   const router = useRouter();
   const [WBSDialogVisible, setWBSDialogVisible] = React.useState(false);
   const [wbsData, setWbsData] = React.useState([]);
-  const [selectedWbs, setSelectedWbs] = useState<WBS>();
+  const [selectedWbs, setSelectedWbs] = useState<Wbs>();
   const [invoiceDetail, setInvoiceDetail] = useState<any>({});
   const [msg, setMsg] = useState('');
   const [sidebarVisible, setSidebarVisible] = useState(false);
-  const [innerUrl, setInnerUrl] = useState('');
   const sid = localStorage.getItem('sid');
   const processInstId = localStorage.getItem('processInstId');
   const taskInstId = localStorage.getItem('taskInstId');
@@ -55,11 +49,15 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
 
   const show = () => {
-    toast.current.show({ severity: 'success', summary: '保存成功', detail: getValues('DOCUMENT_NUM') });
+    toast.current?.show({ severity: 'success', summary: '保存成功', detail: getValues('DOCUMENT_NUM') });
   };
 
-  const show1 = () => {
-    toast.current.show({ severity: 'success', summary: '修改成功', detail: getValues('DOCUMENT_NUM') });
+  const show1 = ({
+    severity = 'success',
+    summary = '保存成功',
+    detail,
+  }: Show) => {
+    toast.current?.show({ severity, summary, detail });
   };
 
   const defaultValues = {
@@ -146,7 +144,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
-      show1();
+      show1({ severity: 'success', summary: '保存成功' });
     }
 
   }
@@ -166,14 +164,8 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
 
   const onSubmit1 = (data: object) => {
-    // 如果 data 里面有字段是 undefined，那么就去掉这个字段
-    Object.keys(data).forEach(key => {
-      if (data[key] === undefined) {
-        delete data[key];
-      }
-    });
+    removeUndifinedKeys(data);
     console.log(data);
-
     const newData = {
       ...data,
       TYPE: 'WBS element'
@@ -238,7 +230,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   }
 
   const getFormErrorMessage = (name: keyof typeof defaultValues) => {
-    return errors[name] ? <small className="p-error">{errors[name].message}</small> : <small className="p-error">&nbsp;</small>;
+    return errors[name] ? <small className="p-error">{errors[name]?.message}</small> : <small className="p-error">&nbsp;</small>;
   };
 
   const showWBSDialog = () => {
@@ -254,6 +246,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       }
     }
   }
+
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
 
     fetchAllShowButton();
@@ -666,7 +661,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
           </div>
           <div className="field col-12 md:col-4">
             <Controller
-              name="administrator"
+              name="PLANER_NAME"
               control={control}
               disabled={formDisabled}
               render={({ field, fieldState }) => (
@@ -705,7 +700,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                 <Button
                   onClick={() => {
                     handelApprove(msg, '提交')
-                    toast.current.show({ severity: 'success', summary: '提交成功' });
+                    toast.current?.show({ severity: 'success', summary: '提交成功' });
                     setTimeout(() => {
                       router.push('/pages/invoice')
                     }, 1000)
@@ -714,7 +709,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                 <Button
                   onClick={() => {
                     handelApprove(msg, '拒绝')
-                    toast.current.show({ severity: 'danger', summary: '已拒绝' });
+                    toast.current?.show({ severity: 'error', summary: '已拒绝' });
 
                   }}
                   label="拒绝" outlined severity="danger" icon="pi pi-times" />
@@ -724,12 +719,12 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                 <Button
                   onClick={() => {
                     handelApprove('', '办理')
-                    toast.current.show({ severity: 'success', summary: '办理成功' });
+                    toast.current?.show({ severity: 'success', summary: '办理成功' });
                   }}
                   label="办理" outlined severity="success" icon="pi pi-check" />
                 <Button
                   onClick={() => {
-                    toast.current.show({ severity: 'danger', summary: '已作废' });
+                    toast.current?.show({ severity: 'error', summary: '已作废' });
                     handelApprove(msg, '作废')
                   }}
                   label="作废" outlined severity="danger" icon="pi pi-times" />
@@ -768,7 +763,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             responsiveLayout="scroll"
             emptyMessage="没有数据."
             selection={selectedWbs}
-            onSelectionChange={(e) => {
+            onSelectionChange={(e: any) => {
               setSelectedWbs(e.value)
               console.log(e.value);
             }}

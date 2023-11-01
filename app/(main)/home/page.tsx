@@ -12,6 +12,7 @@ import { API_BASE_URL } from '../../../constants/constants';
 import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 import { useApiStore } from '../../stores/useApiStore';
+import { Invoice } from '../../../types/data';
 
 const lineData: ChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -159,7 +160,7 @@ const Dashboard = () => {
         })
     }
 
-    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         getTasksNumber()
         getInvoice()
@@ -200,7 +201,7 @@ const Dashboard = () => {
     };
 
 
-    const statusBodyTemplate = (rowData) => {
+    const statusBodyTemplate = (rowData: Invoice) => {
         return <Tag value={rowData.STATUS} severity={getSeverity(rowData.STATUS)}></Tag>;
     };
 

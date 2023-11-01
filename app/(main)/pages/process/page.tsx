@@ -10,16 +10,31 @@ import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 
 
+
+interface TodoData {
+  id: string,
+  title: string,
+  target: string,
+  targetRoleId: string,
+  activityType: string,
+  beginTime: string,
+  remindTimes: string,
+  processInstId: string,
+}
+
+interface TaskTitleMap {
+  '待办任务': string
+  '待阅任务': string
+  '已办任务': string
+  '已阅任务': string
+}
+
+type TaskTitle = keyof TaskTitleMap
+
 const ProcessPage = () => {
   const [todoData, setTodoData] = React.useState([])
-  const [taskTitle, setTaskTitle] = React.useState('待办任务')
+  const [taskTitle, setTaskTitle] = React.useState<TaskTitle>('待办任务')
   const router = useRouter()
-
-
-
-  const statusBodyTemplate = (rowData) => {
-    return <Tag value={rowData.STATUS} severity={getSeverity(rowData.STATUS)}></Tag>;
-};
 
 
   const nestedMenuitems = [
@@ -60,12 +75,7 @@ const ProcessPage = () => {
   ];
 
 
-  const queryTask = async (type:
-    'queryTodoTask'
-    | 'queryToReadTask'
-    | 'queryAlreadyDoTask'
-    | 'queryAlreadyReadTask'
-  ) => {
+  const queryTask = async (type: string) => {
     const sid = localStorage.getItem('sid')
     const cmd = `com.awspaas.user.apps.app20231017165850.${type}`
     const uid = localStorage.getItem('uid')
@@ -80,7 +90,7 @@ const ProcessPage = () => {
     setTodoData(data)
   }
 
-  const taskTitleMap = {
+  const taskTitleMap: TaskTitleMap = {
     '待办任务': 'queryTodoTask',
     '待阅任务': 'queryToReadTask',
     '已办任务': 'queryAlreadyDoTask',

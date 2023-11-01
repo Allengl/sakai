@@ -3,7 +3,6 @@ import { FilterMatchMode, FilterOperator } from 'primereact/api';
 import { Button } from 'primereact/button';
 import { Column, ColumnFilterApplyTemplateOptions, ColumnFilterClearTemplateOptions, ColumnFilterElementTemplateOptions } from 'primereact/column';
 import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
-import { DataTable, DataTableFilterMeta } from 'primereact/datatable';
 import { InputText } from 'primereact/inputtext';
 import { Toast } from 'primereact/toast';
 import { useRouter } from 'next/navigation';
@@ -28,7 +27,7 @@ const InvoicePage = () => {
         ID: "",
         TYPE: "",
         PLANER_NAME: ""
-};
+    };
 
     const [filters1, setFilters1] = useState<DataTableFilterMeta>({});
     const [loading, setLoading] = useState(true);
@@ -42,6 +41,7 @@ const InvoicePage = () => {
     const { invoiceData, setInvoiceData } = useDataStore();
     const [statuses] = useState<string[]>(['INSTOCK', 'LOWSTOCK', 'OUTOFSTOCK']);
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     useEffect(() => {
         getInvoice();
         initFilters();
@@ -197,7 +197,7 @@ const InvoicePage = () => {
         }
     };
 
-    const statusBodyTemplate = (rowData) => {
+    const statusBodyTemplate = (rowData: Invoice) => {
         return <Tag value={rowData.STATUS} severity={getSeverity(rowData.STATUS)}></Tag>;
     };
 
