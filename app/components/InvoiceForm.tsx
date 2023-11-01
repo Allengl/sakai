@@ -123,12 +123,12 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
       .join('&');
     const updateFormCmd = `${cmd}.updateForm`
-    const url = `${API_BASE_URL}?${uid}&cmd=${updateFormCmd}&sid=${sid}&${queryParams}&ID=${boid}`;
+    const url = `${API_BASE_URL}?uid=${uid}&cmd=${updateFormCmd}&sid=${sid}&${queryParams}&ID=${boid}`;
     const response = await fetch(url, { method: 'POST' });
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
-      show1({ severity: 'success', summary: '保存成功' });
+      show1({ severity: 'success', summary: '修改成功' });
     }
 
   }
@@ -186,6 +186,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       // router.push('/pages/invoice')
       console.log(data);
       const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`, { method: 'POST' }
+
       )
     }
     if (comment === '办理') {
@@ -208,7 +209,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   const fetchAllShowButton = async () => {
     const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_FORM_MAIN_PAGE_JSON&processInstId=${processInstId}&taskInstId=${taskInstId}&currentPage=1&openState=1&formDefId=&boId=&displayToolbar=true&lang=`)
     const data = await res.json()
-    console.log(data); 
+    console.log(data);
     {
       if (data.data.usertaskComment && data.data.usertaskComment.actionOpinions) {
         setShowButton(true)
@@ -228,6 +229,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       const url = `${API_BASE_URL}?cmd=${queryFormDetailCmd}&sid=${sid}&boid=${boid}`;
       fetch(url, { method: 'POST' }).then(res => res.json()).then(data => {
         console.log(data);
+        setInvoiceDetail(data);
         setProcessInstId(data.BINDID);
         reset({
           DOCUMENT_NUM: data.DOCUMENT_NUM,
@@ -261,7 +263,10 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     console.log(result);
     if (result.result === 'ok') {
       reset();
-      // router.push('/pages/invoice');
+      show1({ severity: 'success', summary: '提交成功', detail: result.msg });
+      setTimeout(() => {
+        router.push('/pages/invoice');
+      }, 2000)
     }
 
   }
@@ -665,9 +670,11 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               <>
                 <Button
                   type='button'
+                  style={{
+                    display: pageType === 'approve' ? 'none' : 'block'
+                  }}
                   onClick={() => {
                     handelApprove(msg, '提交')
-                    toast.current?.show({ severity: 'success', summary: '提交成功' });
                     setTimeout(() => {
                       router.push('/pages/invoice')
                     }, 1000)
@@ -675,6 +682,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
                   label="同意" outlined severity="success" icon="pi pi-check" />
                 <Button
                   type='button'
+                  style={{
+                    display: pageType === 'approve' ? 'none' : 'block'
+                  }}
                   onClick={() => {
                     handelApprove(msg, '拒绝')
                     toast.current?.show({ severity: 'error', summary: '已拒绝' });
@@ -685,12 +695,20 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             ) : (
               <>
                 <Button
+                  type='button'
+                  style={{
+                    display: pageType === 'approve' ? 'none' : 'block'
+                  }}
                   onClick={() => {
                     handelApprove('', '办理')
                     toast.current?.show({ severity: 'success', summary: '办理成功' });
                   }}
                   label="办理" outlined severity="success" icon="pi pi-check" />
                 <Button
+                  type='button'
+                  style={{
+                    display: pageType === 'approve' ? 'none' : 'block'
+                  }}
                   onClick={() => {
                     toast.current?.show({ severity: 'error', summary: '已作废' });
                     handelApprove(msg, '作废')
@@ -699,6 +717,8 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               </>
             )}
             <Button
+              type='button'
+              style={{ display: invoiceDetail.STATUS === 'NOSTART' ? 'none' : 'block' }}
               label="跟踪" outlined severity="info" icon="pi pi-times"
               onClick={() => {
                 setSidebarVisible(true)
@@ -708,13 +728,18 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
         )}
         {(pageType === 'edit' || pageType === 'new') && (
           <>
-            <Button label="保存" onClick={
-              handleSubmit(onSubmit)
-            }
+            <Button
+              label="保存"
+              disabled={invoiceDetail.STATUS === 'NOSTART' ? false : true}
+              onClick={
+                handleSubmit(onSubmit)
+              }
               type="submit" severity="info" icon="pi pi-save" />
-            <Button label="提交" onClick={() => {
-              startProcess()
-            }} severity="success" icon="pi pi-check" />
+            <Button label="提交"
+              disabled={invoiceDetail.STATUS === 'NOSTART' ? false : true}
+              onClick={() => {
+                startProcess()
+              }} severity="success" icon="pi pi-check" />
           </>
         )}
       </div>

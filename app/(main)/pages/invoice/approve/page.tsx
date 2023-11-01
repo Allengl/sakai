@@ -7,7 +7,7 @@ const ApproveInvoicePage = () => {
   return (
     <div className='card'>
       <h5>审批记录</h5>
-      <InvoiceForm pageType='approve' />
+      <InvoiceForm pageType='approve'/>
     </div>
 
   )

@@ -21,7 +21,7 @@ interface TaskTitleMap {
 type TaskTitle = keyof TaskTitleMap
 
 const ProcessPage = () => {
-  const { sid, uid, cmd, taskInstId, processInstId, setTaskInstId, setProcessInstId } = useApiStore()
+  const { sid, uid, cmd, taskInstId, processInstId, setTaskInstId, setProcessInstId, setBoid } = useApiStore()
   const { todoData, setTodoData } = useDataStore()
   const [taskTitle, setTaskTitle] = useState<TaskTitle>('待办任务')
   const router = useRouter()
@@ -115,7 +115,8 @@ const ProcessPage = () => {
                       console.log(row)
                       setTaskInstId(row.id)
                       setProcessInstId(row.processInstId)
-                      router.push(`/pages/invoice/approve?targetRoleId=${row.targetRoleId}`)
+                      setBoid(row.boid)
+                      router.push(`/pages/invoice/approve?targetRoleId=${row.boid}`)
                     }}
                     icon="pi pi-search" text
                   />
