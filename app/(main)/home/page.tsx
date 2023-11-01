@@ -129,13 +129,8 @@ const Dashboard = () => {
         const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${queryFormListCmd}&sid=${sid}`, { method: 'POST', })
         const data = await res.json()
         console.log(data);
-        // setInvoiceData(data)
-        // if (data && data.result !== "ok") {
-        //     router.push('/auth/access')
-        // } else {
-        //     setInvoiceData(data)
-        // }
         setInvoiceData(data)
+
     }
 
 

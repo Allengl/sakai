@@ -208,7 +208,8 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   const fetchAllShowButton = async () => {
     const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_FORM_MAIN_PAGE_JSON&processInstId=${processInstId}&taskInstId=${taskInstId}&currentPage=1&openState=1&formDefId=&boId=&displayToolbar=true&lang=`)
     const data = await res.json()
-    console.log(data); {
+    console.log(data); 
+    {
       if (data.data.usertaskComment && data.data.usertaskComment.actionOpinions) {
         setShowButton(true)
       }

@@ -56,7 +56,7 @@ const ProcessPage = () => {
 
 
   const queryTask = async (type: string) => {
-    const queryTaskCmd = `${cmd}.queryTask`
+    const queryTaskCmd = `${cmd}.${type}`
     const url = `${API_BASE_URL}?sid=${sid}&cmd=${queryTaskCmd}&uid=${uid}`;
     const res = await fetch(url, { method: 'POST' })
     const data = await res.json()

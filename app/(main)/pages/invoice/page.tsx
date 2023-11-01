@@ -56,12 +56,8 @@ const InvoicePage = () => {
         const data = await res.json()
         console.log(data);
         setLoading(false);
-        // if (data && data.result !== "ok") {
-        //     router.push('/auth/access')
-        // } else {
-        //     setInvoiceData(data)
-        // }
         setInvoiceData(data)
+
     }
 
     const hideDeleteInvoiceDialog = () => {
