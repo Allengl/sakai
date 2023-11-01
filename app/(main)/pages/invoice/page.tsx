@@ -13,6 +13,7 @@ import { Tag } from 'primereact/tag';
 import { useApiStore } from '../../../stores/useApiStore';
 import { useDataStore } from '../../../stores/useDataStore';
 import { Invoice } from '../../../../types/data';
+import { type } from 'os';
 
 
 const InvoicePage = () => {
@@ -32,7 +33,7 @@ const InvoicePage = () => {
     const [filters1, setFilters1] = useState<DataTableFilterMeta>({});
     const [loading, setLoading] = useState(true);
     const [product, setProduct] = useState<Invoice>(emptyProduct);
-    const [globalFilterValue1, setGlobalFilterValue1] = useState('');
+    const [globalFilterValue, setGlobalFilterValue1] = useState('');
     const [selectedProduct, setSelectedProduct] = useState<Invoice>(null as any)
     const [deleteProductDialog, setDeleteProductDialog] = useState<boolean>(false);
     const { cmd, uid, sid, boid, setCmd, setBoid } = useApiStore();
@@ -55,11 +56,15 @@ const InvoicePage = () => {
         const data = await res.json()
         console.log(data);
         setLoading(false);
+        // if (data && data.result !== "ok") {
+        //     router.push('/auth/access')
+        // } else {
+        //     setInvoiceData(data)
+        // }
         setInvoiceData(data)
-
     }
 
-    const hideDeleteProductDialog = () => {
+    const hideDeleteInvoiceDialog = () => {
         setDeleteProductDialog(false);
     };
 
@@ -70,6 +75,7 @@ const InvoicePage = () => {
         const data = await res.json()
         console.log(data);
         toast.current?.show({ severity: 'success', summary: '成功', detail: '删除成功!', life: 3000 });
+
     }
 
 
@@ -85,23 +91,19 @@ const InvoicePage = () => {
 
 
     const ConfirmDeleteSelected = () => {
+        setBoid(selectedProduct?.ID)
         setDeleteProductDialog(true);
     };
 
     const deleteProductDialogFooter = (
         <div className='space-x-4'>
-            <Button type="button" severity="danger" icon="pi pi-times" label="否" outlined onClick={hideDeleteProductDialog} />
-
-            {/* <Button className='bg-white text-lg	p-3 text-green-400 border-1 border-green-400'
-            onClick={deleteProduct}
-          >
-          </Button> */}
+            <Button type="button" severity="danger" icon="pi pi-times" label="否" outlined onClick={hideDeleteInvoiceDialog} />
             <Button type="button" severity="success" icon="pi pi-check" label="是" outlined onClick={deleteProduct} />
 
         </div>
     );
 
-    const onGlobalFilterChange1 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const onGlobalFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         let _filters1 = { ...filters1 };
         (_filters1['global'] as any).value = value;
@@ -119,7 +121,8 @@ const InvoicePage = () => {
                             router.push('/pages/invoice/new/')
                         }} />
                     <Button className="m-1" disabled={!selectedProduct}
-                        type="button" severity="warning" icon="pi pi-trash" label="删除" outlined onClick={ConfirmDeleteSelected} />
+                        type="button" severity="warning" icon="pi pi-trash" label="删除" outlined
+                        onClick={ConfirmDeleteSelected} />
                     <Button className="m-1" disabled={!selectedProduct}
                         type="button" severity="info" icon="pi pi-file" label="编辑" outlined
                         onClick={() => {
@@ -131,14 +134,14 @@ const InvoicePage = () => {
                     <Button className="m-1" disabled={!selectedProduct}
                         type="button" severity="help" icon="pi pi-file-edit" label="审批记录" outlined onClick={
                             () => {
-                                localStorage.setItem('boid', selectedProduct.ID)
+                                setBoid(selectedProduct?.ID)
                                 router.push(`/pages/invoice/approve?id=${selectedProduct?.ID}`)
                             }
                         } />
                 </div>
                 <span className="p-input-icon-left m-1">
                     <i className="pi pi-search" />
-                    <InputText value={globalFilterValue1} onChange={onGlobalFilterChange1} placeholder="关键词筛选" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="关键词筛选" />
                 </span>
             </div>
         );
@@ -262,7 +265,7 @@ const InvoicePage = () => {
                     </DataTable>
                 </div>
 
-                <Dialog visible={deleteProductDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="确认" modal footer={deleteProductDialogFooter} onHide={hideDeleteProductDialog}>
+                <Dialog visible={deleteProductDialog} style={{ width: '32rem' }} breakpoints={{ '960px': '75vw', '641px': '90vw' }} header="确认" modal footer={deleteProductDialogFooter} onHide={hideDeleteInvoiceDialog}>
                     <div className="confirmation-content flex items-center">
                         {product && (
                             <span>
