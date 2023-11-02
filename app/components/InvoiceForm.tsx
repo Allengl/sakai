@@ -17,10 +17,12 @@ import { Wbs } from '../../types/data';
 import { removeUndifinedKeys } from '../../lib/utils';
 import { useApiStore } from '../stores/useApiStore';
 import { useDataStore } from '../stores/useDataStore';
+import { TaskType } from '../(main)/pages/process/task/page';
 
 
 interface InvoiceFormProps {
-  pageType: 'new' | 'edit' | 'approve'
+  pageType: 'new' | 'edit' | 'approve' | 'task';
+  taskType?: TaskType
 }
 
 interface Show {
@@ -85,27 +87,13 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     reset
   } = useForm({ defaultValues });
 
-
-  const createInvoice = async (data: object) => {
-    const queryParams = Object.entries(data)
-      .filter(([key, value]) => value !== "")
-      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-      .join('&');
-    const createFormCmd = `${cmd}.createForm`
-    const url = `${API_BASE_URL}?&uid=${uid}&cmd=${createFormCmd}&sid=${sid}&${queryParams}`;
+  const getWbsData = async () => {
+    const queryWBSListCmd = `${cmd}.queryWBSList`
+    const url = `${API_BASE_URL}?cmd=${queryWBSListCmd}&sid=${sid}`;
     const response = await fetch(url, { method: 'POST' });
-
     const result = await response.json();
     console.log(result);
-    if (result.result === 'ok') {
-      show();
-      localStorage.setItem('boid', result.data);
-      setBoid(result.data);
-      setTimeout(() => {
-        router.push(`/pages/invoice/edit?id=${result.data}`);
-      }, 1000)
-      getInvoiceDetail();
-    }
+    setWbsData(result);
   }
 
   const getInvoiceDetail = async () => {
@@ -116,6 +104,26 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     setInvoiceDetail(data)
   }
 
+  const createInvoice = async (data: object) => {
+    const queryParams = Object.entries(data)
+      .filter(([key, value]) => value !== "")
+      .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+      .join('&');
+    const createFormCmd = `${cmd}.createForm`
+    const url = `${API_BASE_URL}?&uid=${uid}&cmd=${createFormCmd}&sid=${sid}&${queryParams}`;
+    const response = await fetch(url, { method: 'POST' });
+    const result = await response.json();
+    console.log(result);
+    if (result.result === 'ok') {
+      show1({ severity: 'success', summary: '创建成功', detail: '即将跳转到编辑页面' });
+      localStorage.setItem('boid', result.data);
+      setBoid(result.data);
+      setTimeout(() => {
+        router.push(`/pages/invoice/edit?id=${result.data}`);
+      }, 2000)
+      getInvoiceDetail();
+    }
+  }
 
   const updateInvoice = async (data: object) => {
     const queryParams = Object.entries(data)
@@ -130,18 +138,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     if (result.result === 'ok') {
       show1({ severity: 'success', summary: '修改成功' });
     }
-
   }
-
-  const getWbsData = async () => {
-    const queryWBSListCmd = `${cmd}.queryWBSList`
-    const url = `${API_BASE_URL}?cmd=${queryWBSListCmd}&sid=${sid}`;
-    const response = await fetch(url, { method: 'POST' });
-    const result = await response.json();
-    console.log(result);
-    setWbsData(result);
-  }
-
 
   const onSubmit = (data: object) => {
     removeUndifinedKeys(data);
@@ -175,25 +172,51 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       { "msg": msg, "isSelected": true, "commentId": `${randomUUID}`, "isCommentCreate": true, "hasFiles": false, "setComments": false, "processDefId": "obj_e9a85bafeeba49e2aa079b00ae93eefa" }
       : { "msg": msg, "isSelected": true, "isValidateForm": comment === '提交' ? true : 'false', "commentOption": comment, "commentId": `${randomUUID}`, "isCommentCreate": true, "hasFiles": false, "setComments": false, "processDefId": "obj_e9a85bafeeba49e2aa079b00ae93eefa" }
 
-
-
-
     const url = `${API_BASE_URL}?cmd=${cmd}&sid=${sid}&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=${openState}&currentPage=${currentPage}&formDefId=${formDefId}&formData=${formData}&boId=${boId}&boDefId=${boDefId}&oldFormData=${oldFormData}&idCreate=${idCreate}&isTransact=${isTransact}&isValidateForm=${isValidateForm}&commentInfo=${JSON.stringify(commentInfo)}&isNew=${isNew}`;
 
     if (comment === '提交' || comment === '拒绝') {
       const response = await fetch(url, { method: 'POST' });
-      const data = await response.json();
       // router.push('/pages/invoice')
+      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`, { method: 'POST' })
+      const data = await res.json()
       console.log(data);
-      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_TRANSACT&processInstId=${processInstId}&taskInstId=${taskInstId}&openState=1&currentPage=1&selectRole=&isBatch=&isVue=true`, { method: 'POST' }
-
-      )
+      if (data.result === 'ok') {
+        if (comment === '提交') {
+          show1({ severity: 'success', summary: '提交成功', detail: data.msg });
+        }
+        if (comment === '拒绝') {
+          show1({ severity: 'error', summary: '已拒绝', detail: data.msg });
+        }
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      } else {
+        show1({ severity: 'error', summary: '提交失败', detail: data.msg });
+      }
     }
     if (comment === '办理') {
-      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskid=${taskInstId}`, { method: 'POST' })
+      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskid=${taskInstId}`, { method: 'POST' })
+      const data = await res.json()
+      if (data.result === 'ok') {
+        show1({ severity: 'success', summary: '办理成功', detail: data.msg });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      } else {
+        show1({ severity: 'error', summary: '办理失败', detail: data.msg });
+      }
     }
     if (comment === '作废') {
-      await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`, { method: 'POST' })
+      const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`, { method: 'POST' })
+      const data = await res.json()
+      if (data.result === 'ok') {
+        show1({ severity: 'success', summary: '已作废', detail: data.msg });
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000)
+      } else {
+        show1({ severity: 'error', summary: '作废失败', detail: data.msg });
+      }
     }
 
   }
@@ -207,51 +230,65 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   }
 
   const fetchAllShowButton = async () => {
-    const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_FORM_MAIN_PAGE_JSON&processInstId=${processInstId}&taskInstId=${taskInstId}&currentPage=1&openState=1&formDefId=&boId=&displayToolbar=true&lang=`)
+    const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_FORM_MAIN_PAGE_JSON&processInstId=${processInstId}&taskInstId=${taskInstId}&currentPage=1&openState=1&formDefId=&boId=&displayToolbar=true&lang=`, {
+      method: 'POST',
+      cache: 'no-store'
+    })
     const data = await res.json()
     console.log(data);
     {
       if (data.data.usertaskComment && data.data.usertaskComment.actionOpinions) {
         setShowButton(true)
       }
+      console.log(showButton);
+
     }
   }
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-
-    fetchAllShowButton();
-
-    getWbsData()
-    if (pageType === 'edit' || pageType === 'approve') {
+    if (pageType === 'task') {
+      fetchAllShowButton();
+    }
+    if (pageType === 'new' || pageType === 'edit') {
+      getWbsData()
+    }
+    if (pageType === 'edit' || pageType === 'task' || pageType === 'approve') {
       const queryFormDetailCmd = `${cmd}.queryFormDetail`
       const url = `${API_BASE_URL}?cmd=${queryFormDetailCmd}&sid=${sid}&boid=${boid}`;
       fetch(url, { method: 'POST' }).then(res => res.json()).then(data => {
         console.log(data);
-        setInvoiceDetail(data);
-        setProcessInstId(data.BINDID);
-        reset({
-          DOCUMENT_NUM: data.DOCUMENT_NUM,
-          OBJECT_NUM: data.OBJECT_NUM,
-          OBJECT_NAME: data.OBJECT_NAME,
-          MATERIAL_NUM: data.MATERIAL_NUM,
-          BOOK_NAME: data.BOOK_NAME,
-          CHIEF: data.CHIEF,
-          PLANER_NUM: data.PLANER_NUM,
-          PLANER_NAME: data.PLANER_NAME,
-          DEPT_NUM: data.DEPT_NUM,
-          DEPT_NAME: data.DEPT_NAME,
-          CREATEDATE: data.CREATEDATE,
-          CREATEUSER: data.CREATEUSER,
-          UPDATEDATE: data.UPDATEDATE,
-          UPDATEUSER: data.UPDATEUSER,
-        })
+        if (data) {
+          setInvoiceDetail(data);
+          if (pageType === 'approve') {
+            setProcessInstId(data.BINDID);
+          }
+          reset({
+            DOCUMENT_NUM: data.DOCUMENT_NUM,
+            OBJECT_NUM: data.OBJECT_NUM,
+            OBJECT_NAME: data.OBJECT_NAME,
+            MATERIAL_NUM: data.MATERIAL_NUM,
+            BOOK_NAME: data.BOOK_NAME,
+            CHIEF: data.CHIEF,
+            PLANER_NUM: data.PLANER_NUM,
+            PLANER_NAME: data.PLANER_NAME,
+            DEPT_NUM: data.DEPT_NUM,
+            DEPT_NAME: data.DEPT_NAME,
+            CREATEDATE: data.CREATEDATE,
+            CREATEUSER: data.CREATEUSER,
+            UPDATEDATE: data.UPDATEDATE,
+            UPDATEUSER: data.UPDATEUSER,
+          })
+        } else {
+          show1({ severity: 'error', summary: '获取数据失败', detail: data.msg });
+        }
+
       })
     }
   }, []);
 
-  const formDisabled = pageType === 'approve';
+  const formDisabled = pageType === 'approve' || pageType === 'task' ? true : false;
 
 
   const startProcess = async () => {
@@ -265,7 +302,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       reset();
       show1({ severity: 'success', summary: '提交成功', detail: result.msg });
       setTimeout(() => {
-        router.push('/pages/invoice');
+        window.location.reload();
       }, 2000)
     }
 
@@ -652,7 +689,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
         </div>
       </Panel>
       {
-        pageType === 'approve' && (
+        pageType === 'task' && (
           <Panel header='审批意见'>
             <InputTextarea
               className='w-full'
@@ -664,31 +701,20 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
       }
       <div className="field col-12 md-4 flex gap-3 justify-end">
-        {pageType === 'approve' && (
+        {pageType === 'task' && (
           <>
             {showButton ? (
               <>
                 <Button
                   type='button'
-                  style={{
-                    display: pageType === 'approve' ? 'none' : 'block'
-                  }}
                   onClick={() => {
                     handelApprove(msg, '提交')
-                    setTimeout(() => {
-                      router.push('/pages/invoice')
-                    }, 1000)
                   }}
                   label="同意" outlined severity="success" icon="pi pi-check" />
                 <Button
                   type='button'
-                  style={{
-                    display: pageType === 'approve' ? 'none' : 'block'
-                  }}
                   onClick={() => {
                     handelApprove(msg, '拒绝')
-                    toast.current?.show({ severity: 'error', summary: '已拒绝' });
-
                   }}
                   label="拒绝" outlined severity="danger" icon="pi pi-times" />
               </>
@@ -696,52 +722,51 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               <>
                 <Button
                   type='button'
-                  style={{
-                    display: pageType === 'approve' ? 'none' : 'block'
-                  }}
                   onClick={() => {
                     handelApprove('', '办理')
-                    toast.current?.show({ severity: 'success', summary: '办理成功' });
                   }}
                   label="办理" outlined severity="success" icon="pi pi-check" />
                 <Button
                   type='button'
-                  style={{
-                    display: pageType === 'approve' ? 'none' : 'block'
-                  }}
                   onClick={() => {
-                    toast.current?.show({ severity: 'error', summary: '已作废' });
                     handelApprove(msg, '作废')
                   }}
                   label="作废" outlined severity="danger" icon="pi pi-times" />
               </>
             )}
-            <Button
-              type='button'
-              style={{ display: invoiceDetail.STATUS === 'NOSTART' ? 'none' : 'block' }}
-              label="跟踪" outlined severity="info" icon="pi pi-times"
-              onClick={() => {
-                setSidebarVisible(true)
-              }}
-            />
           </>
         )}
-        {(pageType === 'edit' || pageType === 'new') && (
-          <>
-            <Button
-              label="保存"
-              disabled={invoiceDetail.STATUS === 'NOSTART' ? false : true}
-              onClick={
-                handleSubmit(onSubmit)
-              }
-              type="submit" severity="info" icon="pi pi-save" />
-            <Button label="提交"
-              disabled={invoiceDetail.STATUS === 'NOSTART' ? false : true}
-              onClick={() => {
-                startProcess()
-              }} severity="success" icon="pi pi-check" />
-          </>
+        {(pageType === 'task' || pageType === 'approve') && (
+          <Button
+            type='button'
+            style={{ display: invoiceDetail.STATUS === 'NOSTART' ? 'none' : 'block' }}
+            label="跟踪" outlined severity="info" icon="pi pi-angle-double-up"
+            onClick={() => {
+              setSidebarVisible(true)
+            }}
+          />
         )}
+        {
+          (pageType === 'edit' || pageType === 'new') && (
+            <>
+              <Button
+                label="保存"
+                disabled={!(pageType === 'new') && invoiceDetail.STATUS !== 'NOSTART'}
+                onClick={handleSubmit(onSubmit)}
+                type="submit"
+                severity="info"
+                icon="pi pi-save"
+              />
+              <Button
+                label="提交"
+                disabled={!(pageType === 'new') && invoiceDetail.STATUS !== 'NOSTART'}
+                onClick={startProcess}
+                severity="success"
+                icon="pi pi-check"
+              />
+            </>
+          )
+        }
       </div>
       <Dialog header="WBS 元素" visible={WBSDialogVisible} style={{ width: '50vw' }} onHide={() => setWBSDialogVisible(false)}>
         <div className='space-y-2'>
@@ -791,7 +816,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             {/* <Column sortable field="PLANER_NAME" header="策划编辑" style={{ minWidth: '4rem' }}></Column> */}
           </DataTable>
           <div className='flex justify-end'>
-            <Button label="确认" type="submit" severity="success" icon="pi pi-check" onClick={() => {
+            <Button label="确认" className='mt-4' type="submit" severity="success" icon="pi pi-check" onClick={() => {
               setWBSDialogVisible(false);
               reset({
                 DOCUMENT_NUM: selectedWbs?.TOPIC_NUM,

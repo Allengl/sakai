@@ -71,6 +71,13 @@ const ProcessPage = () => {
     '已阅任务': 'queryAlreadyReadTask',
   }
 
+  const taskTypeMap = {
+    '待办任务': 'todo',
+    '待阅任务': 'read',
+    '已办任务': 'done',
+    '已阅任务': 'readDone',
+  }
+
   useEffect(() => {
     queryTask(taskTitleMap[taskTitle])
   }, [taskTitle])
@@ -116,7 +123,7 @@ const ProcessPage = () => {
                       setTaskInstId(row.id)
                       setProcessInstId(row.processInstId)
                       setBoid(row.boid)
-                      router.push(`/pages/invoice/approve?targetRoleId=${row.boid}`)
+                      router.push(`/pages/process/task?taskType=${taskTypeMap[taskTitle]}&id=${row.boid} `)
                     }}
                     icon="pi pi-search" text
                   />

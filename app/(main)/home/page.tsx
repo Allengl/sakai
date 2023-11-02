@@ -284,7 +284,7 @@ const Dashboard = () => {
                         <Column field="OBJECT_NAME" header="对象描述" sortable style={{ width: '35%' }} body={(data) => formatCurrency(data.price)} />
                         <Column field="STATUS" header="状态" body={statusBodyTemplate} style={{ width: '10%' }}></Column>
                         <Column
-                            header="详情"
+                            header="审批记录"
                             style={{ width: '15%' }}
                             body={(row) => (
                                 <>

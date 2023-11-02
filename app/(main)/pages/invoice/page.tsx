@@ -116,7 +116,9 @@ const InvoicePage = () => {
                         onClick={() => {
                             router.push('/pages/invoice/new/')
                         }} />
-                    <Button className="m-1" disabled={!selectedProduct}
+                    <Button className="m-1" disabled={!selectedProduct
+                        || selectedProduct.STATUS !== 'NOSTART'
+                    }
                         type="button" severity="warning" icon="pi pi-trash" label="删除" outlined
                         onClick={ConfirmDeleteSelected} />
                     <Button className="m-1" disabled={!selectedProduct}
@@ -148,29 +150,34 @@ const InvoicePage = () => {
     const initFilters = () => {
         setFilters1({
             global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-            name: {
+            TYPE: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
             },
-            'country.name': {
+            OBJECT_NUM: {
                 operator: FilterOperator.AND,
                 constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
             },
-            representative: { value: null, matchMode: FilterMatchMode.IN },
-            date: {
+            OBJECT_NAME: {
                 operator: FilterOperator.AND,
-                constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }]
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
             },
-            balance: {
+            DEPT_NAME: {
                 operator: FilterOperator.AND,
-                constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }]
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
             },
-            status: {
+            BOOK_NAME: {
+                operator: FilterOperator.OR,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
+            },
+            MATERIAL_NUM: {
+                operator: FilterOperator.OR,
+                constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }]
+            },
+            STATUS: {
                 operator: FilterOperator.OR,
                 constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }]
             },
-            activity: { value: null, matchMode: FilterMatchMode.BETWEEN },
-            verified: { value: null, matchMode: FilterMatchMode.EQUALS }
         });
         setGlobalFilterValue1('');
     };
