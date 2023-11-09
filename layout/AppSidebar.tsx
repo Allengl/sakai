@@ -1,3 +1,4 @@
+'use client'
 import AppMenu from './AppMenu';
 
 const AppSidebar = () => {

@@ -14,6 +14,9 @@ import { Tag } from 'primereact/tag';
 import { useApiStore } from '../../stores/useApiStore';
 import { Invoice } from '../../../types/data';
 import { useDataStore } from '../../stores/useDataStore';
+import { Toast } from 'primereact/toast';
+import Link from 'next/link';
+
 
 const lineData: ChartData = {
     labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
@@ -44,8 +47,17 @@ type TasksNumber = {
     queryAlreadyReadTask: number,
 }
 
+interface Show {
+    severity: "success" | "info" | "warn" | "error" | undefined,
+    summary: string,
+    detail?: React.ReactNode,
+    life?: number
+}
+
+
 const Dashboard = () => {
     const { cmd, uid, boid, sid, setBoid } = useApiStore();
+    const toast = useRef<Toast>(null);
     const menu1 = useRef<Menu>(null);
     const menu2 = useRef<Menu>(null);
     const [lineOptions, setLineOptions] = useState<ChartOptions>({});
@@ -129,6 +141,11 @@ const Dashboard = () => {
         const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${queryFormListCmd}&sid=${sid}`, { method: 'POST', })
         const data = await res.json()
         console.log(data);
+        if (data.result === 'error' && data.errorCode === '403') {
+            toast.current?.show({ severity: 'error', summary: '登录已过期', detail: '请重新登录', life: 2000 });
+            router.push('/auth/login')
+        }
+
         setInvoiceData(data)
 
     }
@@ -194,7 +211,7 @@ const Dashboard = () => {
             case 'terminate':
                 return 'danger';
 
-            case '1111':
+            case 'end':
                 return 'info';
 
             default:
@@ -213,65 +230,73 @@ const Dashboard = () => {
     return (
         <div className="grid">
             <div className="col-12 lg:col-6 xl:col-3">
-                <div className="card mb-0">
-                    <div className="flex justify-content-between mb-3">
-                        <div>
-                            <span className="block text-500 font-medium mb-3">待办任务</span>
-                            <div className="text-900 font-medium text-xl">{tasksNumber.queryTodoTask} 待办</div>
+                <Link href="/pages/process">
+                    <div className="card mb-0">
+                        <div className="flex justify-content-between mb-3">
+                            <div>
+                                <span className="block text-500 font-medium mb-3">待办任务</span>
+                                <div className="text-900 font-medium text-xl">{tasksNumber.queryTodoTask} 待办</div>
+                            </div>
+                            <div className="flex align-items-center justify-content-center bg-blue-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
+                                <i className="pi pi-file-edit text-blue-500 text-xl" />
+                            </div>
                         </div>
-                        <div className="flex align-items-center justify-content-center bg-blue-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                            <i className="pi pi-file-edit text-blue-500 text-xl" />
-                        </div>
-                    </div>
-                    {/* <span className="text-green-500 font-medium">24 new </span>
+                        {/* <span className="text-green-500 font-medium">24 new </span>
                     <span className="text-500">since last visit</span> */}
 
-                </div>
+                    </div>
+                </Link>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
-                <div className="card mb-0">
-                    <div className="flex justify-content-between mb-3">
-                        <div>
-                            <span className="block text-500 font-medium mb-3">待阅任务</span>
-                            <div className="text-900 font-medium text-xl">{tasksNumber.queryToReadTask} 未读</div>
+                <Link href="/pages/process?task=todo">
+                    <div className="card mb-0">
+                        <div className="flex justify-content-between mb-3">
+                            <div>
+                                <span className="block text-500 font-medium mb-3">待阅任务</span>
+                                <div className="text-900 font-medium text-xl">{tasksNumber.queryToReadTask} 未读</div>
+                            </div>
+                            <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
+                                <i className="pi pi-bell text-orange-500 text-xl" />
+                            </div>
                         </div>
-                        <div className="flex align-items-center justify-content-center bg-orange-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                            <i className="pi pi-bell text-orange-500 text-xl" />
-                        </div>
-                    </div>
-                    {/* <span className="text-green-500 font-medium">%52+ </span>
+                        {/* <span className="text-green-500 font-medium">%52+ </span>
                     <span className="text-500">since last week</span> */}
-                </div>
+                    </div>
+                </Link>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
-                <div className="card mb-0">
-                    <div className="flex justify-content-between mb-3">
-                        <div>
-                            <span className="block text-500 font-medium mb-3">已办任务</span>
-                            <div className="text-900 font-medium text-xl">{tasksNumber.queryAlreadyDoTask} 已办</div>
+                <Link href="/pages/process">
+                    <div className="card mb-0">
+                        <div className="flex justify-content-between mb-3">
+                            <div>
+                                <span className="block text-500 font-medium mb-3">已办任务</span>
+                                <div className="text-900 font-medium text-xl">{tasksNumber.queryAlreadyDoTask} 已办</div>
+                            </div>
+                            <div className="flex align-items-center justify-content-center bg-cyan-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
+                                <i className="pi pi-check-circle text-cyan-500 text-xl" />
+                            </div>
                         </div>
-                        <div className="flex align-items-center justify-content-center bg-cyan-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                            <i className="pi pi-check-circle text-cyan-500 text-xl" />
-                        </div>
-                    </div>
-                    {/* <span className="text-green-500 font-medium">520 </span>
+                        {/* <span className="text-green-500 font-medium">520 </span>
                     <span className="text-500">newly registered</span> */}
-                </div>
+                    </div>
+                </Link>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
-                <div className="card mb-0">
-                    <div className="flex justify-content-between mb-3">
-                        <div>
-                            <span className="block text-500 font-medium mb-3">已阅任务</span>
-                            <div className="text-900 font-medium text-xl">{tasksNumber.queryAlreadyReadTask} 已阅</div>
+                <Link href="/pages/process">
+                    <div className="card mb-0">
+                        <div className="flex justify-content-between mb-3">
+                            <div>
+                                <span className="block text-500 font-medium mb-3">已阅任务</span>
+                                <div className="text-900 font-medium text-xl">{tasksNumber.queryAlreadyReadTask} 已阅</div>
+                            </div>
+                            <div className="flex align-items-center justify-content-center bg-purple-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
+                                <i className="pi pi-check-square text-purple-500 text-xl" />
+                            </div>
                         </div>
-                        <div className="flex align-items-center justify-content-center bg-purple-100 border-round" style={{ width: '2.5rem', height: '2.5rem' }}>
-                            <i className="pi pi-check-square text-purple-500 text-xl" />
-                        </div>
-                    </div>
-                    {/* <span className="text-green-500 font-medium">85 </span>
+                        {/* <span className="text-green-500 font-medium">85 </span>
                     <span className="text-500">responded</span> */}
-                </div>
+                    </div>
+                </Link>
             </div>
 
             <div className="col-12 xl:col-6">

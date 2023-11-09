@@ -36,9 +36,9 @@ const LoginPage = () => {
         const data: LoginResponse = await res.json()
         console.log(data)
         if (data.result === 'ok') {
-            localStorage.setItem('uid', username)
+            typeof window !== "undefined" ? window.localStorage.setItem('uid', username) : false
             setUid(username)
-            localStorage.setItem('sid', data.data.sid)
+            typeof window !== "undefined" ? window.localStorage.setItem('sid', data.data.sid) : false
             setSid(data.data.sid)
             router.push('/home')
         }

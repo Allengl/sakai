@@ -49,12 +49,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
 
   const randomUUID = uuidv4();
 
-
-  const show = () => {
-    toast.current?.show({ severity: 'success', summary: '保存成功', detail: getValues('DOCUMENT_NUM') });
-  };
-
-  const show1 = ({ severity = 'success', summary = '保存成功', detail, }: Show) => {
+  const show = ({ severity = 'success', summary = '保存成功', detail, }: Show) => {
     toast.current?.show({ severity, summary, detail });
   };
 
@@ -104,7 +99,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     setInvoiceDetail(data)
   }
 
-  const createInvoice = async (data: object) => {
+  const createInvoice = async (data: object, msg: string) => {
     const queryParams = Object.entries(data)
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
@@ -115,7 +110,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
-      show1({ severity: 'success', summary: '创建成功', detail: '即将跳转到编辑页面' });
+      show({ severity: 'success', summary: '创建成功', detail: msg });
       localStorage.setItem('boid', result.data);
       setBoid(result.data);
       setTimeout(() => {
@@ -125,7 +120,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     }
   }
 
-  const updateInvoice = async (data: object) => {
+  const updateInvoice = async (data: object, msg: string) => {
     const queryParams = Object.entries(data)
       .filter(([key, value]) => value !== "")
       .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
@@ -136,7 +131,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
-      show1({ severity: 'success', summary: '修改成功' });
+      show({ severity: 'success', summary: '修改成功', detail: msg });
     }
   }
 
@@ -149,9 +144,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     }
 
     if (pageType === 'new') {
-      createInvoice(newData)
+      createInvoice(newData, '即将跳转到编辑页面')
     } else if (pageType === 'edit') {
-      updateInvoice(newData)
+      updateInvoice(newData, '修改成功')
     }
   }
 
@@ -182,40 +177,40 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       console.log(data);
       if (data.result === 'ok') {
         if (comment === '提交') {
-          show1({ severity: 'success', summary: '提交成功', detail: data.msg });
+          show({ severity: 'success', summary: '提交成功', detail: data.msg });
         }
         if (comment === '拒绝') {
-          show1({ severity: 'error', summary: '已拒绝', detail: data.msg });
+          show({ severity: 'error', summary: '已拒绝', detail: data.msg });
         }
         setTimeout(() => {
           window.location.reload();
         }, 2000)
       } else {
-        show1({ severity: 'error', summary: '提交失败', detail: data.msg });
+        show({ severity: 'error', summary: '提交失败', detail: data.msg });
       }
     }
     if (comment === '办理') {
       const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=com.awspaas.user.apps.app20231017165850.completeTask&uid=${uid}&taskid=${taskInstId}`, { method: 'POST' })
       const data = await res.json()
       if (data.result === 'ok') {
-        show1({ severity: 'success', summary: '办理成功', detail: data.msg });
+        show({ severity: 'success', summary: '办理成功', detail: data.msg });
         setTimeout(() => {
           window.location.reload();
         }, 2000)
       } else {
-        show1({ severity: 'error', summary: '办理失败', detail: data.msg });
+        show({ severity: 'error', summary: '办理失败', detail: data.msg });
       }
     }
     if (comment === '作废') {
       const res = await fetch(`${API_BASE_URL}?sid=${sid}&cmd=CLIENT_BPM_TASK_DEL_TASK&uid=${uid}&taskInstId=${taskInstId}&processInstId=${processInstId}`, { method: 'POST' })
       const data = await res.json()
       if (data.result === 'ok') {
-        show1({ severity: 'success', summary: '已作废', detail: data.msg });
+        show({ severity: 'success', summary: '已作废', detail: data.msg });
         setTimeout(() => {
           window.location.reload();
         }, 2000)
       } else {
-        show1({ severity: 'error', summary: '作废失败', detail: data.msg });
+        show({ severity: 'error', summary: '作废失败', detail: data.msg });
       }
     }
 
@@ -281,17 +276,27 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             UPDATEUSER: data.UPDATEUSER,
           })
         } else {
-          show1({ severity: 'error', summary: '获取数据失败', detail: data.msg });
+          show({ severity: 'error', summary: '获取数据失败', detail: data.msg });
         }
 
       })
     }
   }, []);
 
-  const formDisabled = pageType === 'approve' || pageType === 'task' ? true : false;
+  // const (formDisabled) = pageType === 'new' && invoiceDetail.STATUS !== 'NOSTART' || pageType === 'approve' || pageType === 'task' ? true : false;
+
+
+  const formDisabled = () => {
+    if (pageType === 'new') {
+      return false
+    } else if (pageType === 'approve' || pageType === 'task' || pageType === 'edit') {
+      return invoiceDetail.STATUS === 'NOSTART' ? false : true
+    }
+  }
 
 
   const startProcess = async () => {
+
     const startProcessCmd = `${cmd}.startProcess`
     const processDefId = 'obj_e9a85bafeeba49e2aa079b00ae93eefa'
     const url = `${API_BASE_URL}?uid=${uid}&cmd=${startProcessCmd}&sid=${sid}&boid=${boid}&processDefId=${processDefId}`;
@@ -300,12 +305,30 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     console.log(result);
     if (result.result === 'ok') {
       reset();
-      show1({ severity: 'success', summary: '提交成功', detail: result.msg });
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000)
+      show({ severity: 'success', summary: '提交成功', detail: result.msg });
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 2000)
     }
 
+  }
+
+  const submitted = () => {
+    const data = getValues();
+    console.log(data);
+    removeUndifinedKeys(data);
+    console.log(data);
+    const newData = {
+      ...data,
+      TYPE: 'WBS element'
+    }
+    if (pageType === 'new') {
+      createInvoice(newData, '正在启动流程').then((res) => {
+        console.log(res);
+      })
+    } else if (pageType === 'edit') {
+      updateInvoice(newData, '正在启动流程').then(() => startProcess())
+    }
   }
 
 
@@ -319,7 +342,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               name="DOCUMENT_NUM"
               control={control}
               rules={{ required: '凭证编号 is required.' }}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>凭证编号</label>
@@ -338,7 +361,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="OBJECT_NUM"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
 
               render={({ field, fieldState }) => (
                 <>
@@ -358,7 +381,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="OBJECT_NAME"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
 
               render={({ field, fieldState }) => (
                 <>
@@ -378,7 +401,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <div className='flex items-center my-4'>
               <label>&nbsp;</label>
               <Button
-                disabled={formDisabled}
+                disabled={formDisabled()}
                 icon="pi pi-search" rounded text raised severity="success" aria-label="Search"
                 onClick={showWBSDialog}
                 type='button'
@@ -389,7 +412,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="MATERIAL_NUM"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>物料号</label>
@@ -408,7 +431,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="DEPT_NUM"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>所属部门</label>
@@ -427,7 +450,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="DEPT_NAME"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>&nbsp;</label>
@@ -446,7 +469,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="BOOK_NAME"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>书名</label>
@@ -465,7 +488,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="CHIEF"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>著译者</label>
@@ -484,7 +507,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="PLANER_NAME"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>策划编辑</label>
@@ -503,7 +526,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="CREATEUSER"
               control={control}
-              disabled={formDisabled}
+              disabled={true}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>创建人</label>
@@ -522,7 +545,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="CREATEDATE"
               control={control}
-              disabled={formDisabled}
+              disabled={true}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>创建日期</label>
@@ -541,7 +564,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="UPDATEUSER"
               control={control}
-              disabled={formDisabled}
+              disabled={true}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>最后修改人</label>
@@ -560,7 +583,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="UPDATEDATE"
               control={control}
-              disabled={formDisabled}
+              disabled={true}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>最后修改日期</label>
@@ -583,7 +606,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="OBJECT_NUM"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>WBS 元素</label>
@@ -602,7 +625,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="OBJECT_NAME"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>&nbsp;</label>
@@ -623,7 +646,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               <Button
                 onClick={showWBSDialog}
                 type='button'
-                disabled={formDisabled}
+                disabled={formDisabled()}
                 icon="pi pi-search"
                 rounded text raised severity="success"
                 aria-label="Search" />
@@ -633,7 +656,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="COMPANY_CODE"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>公司代码</label>
@@ -652,7 +675,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="PLANER_NUM"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>申请人编号</label>
@@ -671,7 +694,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
             <Controller
               name="PLANER_NAME"
               control={control}
-              disabled={formDisabled}
+              disabled={formDisabled()}
               render={({ field, fieldState }) => (
                 <>
                   <label htmlFor={field.name}>管理员</label>
@@ -759,8 +782,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
               />
               <Button
                 label="提交"
+                type='button'
                 disabled={!(pageType === 'new') && invoiceDetail.STATUS !== 'NOSTART'}
-                onClick={startProcess}
+                onClick={submitted}
                 severity="success"
                 icon="pi pi-check"
               />

@@ -34,23 +34,23 @@ export const useApiStore = create<ApiState & SetApiState>((set) => ({
 }));
 
 
-const storedUid = localStorage.getItem('uid');
+const storedUid = typeof window !== "undefined" ? window.localStorage.getItem('uid') : false
 if (storedUid) {
   useApiStore.setState({ uid: storedUid });
 }
-const storedSid = localStorage.getItem('sid');
+const storedSid = typeof window !== "undefined" ? window.localStorage.getItem('sid') : false
 if (storedSid) {
   useApiStore.setState({ sid: storedSid });
 }
-const storedBoid = localStorage.getItem('boid');
+const storedBoid = typeof window !== "undefined" ? window.localStorage.getItem('boid') : false
 if (storedBoid) {
   useApiStore.setState({ boid: storedBoid });
 }
-const storedProcessInstId = localStorage.getItem('processInstId');
+const storedProcessInstId = typeof window !== "undefined" ? window.localStorage.getItem('processInstId') : false
 if (storedProcessInstId) {
   useApiStore.setState({ processInstId: storedProcessInstId });
 }
-const storedTaskInstId = localStorage.getItem('taskInstId');
+const storedTaskInstId = typeof window !== "undefined" ? window.localStorage.getItem('taskInstId') : false
 if (storedTaskInstId) {
   useApiStore.setState({ taskInstId: storedTaskInstId });
 }

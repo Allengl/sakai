@@ -30,7 +30,7 @@ const LandingPage = () => {
                 <div className="py-4 px-4 mx-0 md:mx-6 lg:mx-8 lg:px-8 flex align-items-center justify-content-between relative lg:static">
                     <Link href="/home" className="flex align-items-center">
                         <img src={`${baseUrl}/layout/images/${layoutConfig.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}.svg`} alt="Logo" height="50" className="mr-0 lg:mr-2" />
-                        <span className="text-900 font-medium text-2xl line-height-3 mr-8">PLM</span>
+                        <span className="text-900 font-medium text-2xl line-height-3 mr-8">项目费用单</span>
                     </Link>
                     <StyleClass nodeRef={menuRef as NodeRef} selector="@next" enterClassName="hidden" leaveToClassName="hidden" hideOnOutsideClick>
                         <i ref={menuRef} className="pi pi-bars text-4xl cursor-pointer block lg:hidden text-700"></i>
@@ -510,7 +510,7 @@ const LandingPage = () => {
                         <div className="col-12 md:col-2" style={{ marginTop: '-1.5rem' }}>
                             <Link href="/" className="flex flex-wrap align-items-center justify-content-center md:justify-content-start md:mb-0 mb-3 cursor-pointer">
                                 <img src={`${baseUrl}/layout/images/${layoutConfig.colorScheme === 'light' ? 'logo-dark' : 'logo-white'}.svg`} alt="footer sections" width="50" height="50" className="mr-2" />
-                                <span className="font-medium text-3xl text-900">PLM</span>
+                                <span className="font-medium text-3xl text-900">项目费用单</span>
                             </Link>
                         </div>
 
