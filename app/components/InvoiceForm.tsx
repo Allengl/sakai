@@ -117,6 +117,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
         router.push(`/pages/invoice/edit?id=${result.data}`);
       }, 2000)
       getInvoiceDetail();
+      return result.data;
     }
   }
 
@@ -295,25 +296,22 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
   }
 
 
-  const startProcess = async () => {
-
+  const startProcess = async (id: string) => {
     const startProcessCmd = `${cmd}.startProcess`
     const processDefId = 'obj_e9a85bafeeba49e2aa079b00ae93eefa'
-    const url = `${API_BASE_URL}?uid=${uid}&cmd=${startProcessCmd}&sid=${sid}&boid=${boid}&processDefId=${processDefId}`;
+    const url = `${API_BASE_URL}?uid=${uid}&cmd=${startProcessCmd}&sid=${sid}&boid=${id}&processDefId=${processDefId}`;
     const response = await fetch(url, { method: 'POST' });
     const result = await response.json();
     console.log(result);
     if (result.result === 'ok') {
       reset();
       show({ severity: 'success', summary: '提交成功', detail: result.msg });
-      // setTimeout(() => {
-      //   window.location.reload();
-      // }, 2000)
+    } else {
+      show({ severity: 'error', summary: '提交失败', detail: '请联系管理员' });
     }
-
   }
 
-  const submitted = () => {
+  const submitted = async () => {
     const data = getValues();
     console.log(data);
     removeUndifinedKeys(data);
@@ -323,11 +321,11 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       TYPE: 'WBS element'
     }
     if (pageType === 'new') {
-      createInvoice(newData, '正在启动流程').then((res) => {
-        console.log(res);
-      })
+      const id = await createInvoice(newData, '正在启动流程...')
+      startProcess(id)
     } else if (pageType === 'edit') {
-      updateInvoice(newData, '正在启动流程').then(() => startProcess())
+      updateInvoice(newData, '正在启动流程...')
+      startProcess(boid)
     }
   }
 
