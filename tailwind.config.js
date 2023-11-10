@@ -47,6 +47,9 @@ module.exports = {
       minHeight: {
         590: '590px',
       },
+      fontWeight: {
+        'text-bold': '700'
+      },
       backgroundImage: {
         'hero-pattern':
           "url('https://i.postimg.cc/Fz1HHQ5v/Snipaste-2023-10-15-20-49-01.png')",

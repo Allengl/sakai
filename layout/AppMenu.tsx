@@ -31,27 +31,27 @@ const AppMenu = () => {
                     icon: 'pi pi-fw pi-file',
                     to: '/pages/invoice'
                 },
-                {
-                    label: '用户',
-                    icon: 'pi pi-fw pi-user',
-                    items: [
-                        {
-                            label: '登录',
-                            icon: 'pi pi-fw pi-sign-in',
-                            to: '/auth/login'
-                        },
-                        {
-                            label: 'Error',
-                            icon: 'pi pi-fw pi-times-circle',
-                            to: '/auth/error'
-                        },
-                        {
-                            label: 'Access Denied',
-                            icon: 'pi pi-fw pi-lock',
-                            to: '/auth/access'
-                        }
-                    ]
-                },
+                // {
+                //     label: '用户',
+                //     icon: 'pi pi-fw pi-user',
+                //     items: [
+                //         {
+                //             label: '登录',
+                //             icon: 'pi pi-fw pi-sign-in',
+                //             to: '/auth/login'
+                //         },
+                //         {
+                //             label: 'Error',
+                //             icon: 'pi pi-fw pi-times-circle',
+                //             to: '/auth/error'
+                //         },
+                //         {
+                //             label: 'Access Denied',
+                //             icon: 'pi pi-fw pi-lock',
+                //             to: '/auth/access'
+                //         }
+                //     ]
+                // },
             ]
         },
     ];

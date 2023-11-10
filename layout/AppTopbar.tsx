@@ -6,12 +6,16 @@ import React, { forwardRef, useContext, useImperativeHandle, useRef } from 'reac
 import { AppTopbarRef } from '../types/types';
 import { LayoutContext } from './context/layoutcontext';
 import { ASSETS_BASE_PATH } from '../constants/constants';
+import { Menu } from 'primereact/menu';
+import { useRouter } from 'next/navigation';
 
 const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
     const { layoutConfig, layoutState, onMenuToggle, showProfileSidebar } = useContext(LayoutContext);
     const menubuttonRef = useRef(null);
     const topbarmenuRef = useRef(null);
     const topbarmenubuttonRef = useRef(null);
+    const menu2 = useRef<Menu>(null);
+    const router = useRouter()
 
     useImperativeHandle(ref, () => ({
         menubutton: menubuttonRef.current,
@@ -40,16 +44,32 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
                     <i className="pi pi-calendar"></i>
                     <span>Calendar</span>
                 </button> */}
-                <button type="button" className="p-link layout-topbar-button">
+                <button type="button" className="p-link layout-topbar-button"
+                    onClick={(event) => menu2.current?.toggle(event)}
+                >
                     <i className="pi pi-user"></i>
-                    <span>Profile</span>
+                    <span>用户</span>
                 </button>
-                <Link href="/documentation">
+                <Menu
+                    ref={menu2}
+                    popup
+                    model={[
+                        {
+                            label: 'Logout',
+                            icon: 'pi pi-fw pi-sign-in',
+                            command: () => {
+                                router.push('/auth/login')
+                            }
+                        },
+
+                    ]}
+                />
+                {/* <Link href="/documentation">
                     <button type="button" className="p-link layout-topbar-button">
                         <i className="pi pi-cog"></i>
                         <span>Settings</span>
                     </button>
-                </Link>
+                </Link> */}
             </div>
         </div>
     );

@@ -184,7 +184,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
           show({ severity: 'error', summary: '已拒绝', detail: data.msg });
         }
         setTimeout(() => {
-          window.location.reload();
+          router.back();
         }, 2000)
       } else {
         show({ severity: 'error', summary: '提交失败', detail: data.msg });
@@ -196,7 +196,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       if (data.result === 'ok') {
         show({ severity: 'success', summary: '办理成功', detail: data.msg });
         setTimeout(() => {
-          window.location.reload();
+          router.back();
         }, 2000)
       } else {
         show({ severity: 'error', summary: '办理失败', detail: data.msg });
@@ -208,7 +208,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       if (data.result === 'ok') {
         show({ severity: 'success', summary: '已作废', detail: data.msg });
         setTimeout(() => {
-          window.location.reload();
+          router.back();
         }, 2000)
       } else {
         show({ severity: 'error', summary: '作废失败', detail: data.msg });

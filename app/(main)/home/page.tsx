@@ -424,8 +424,8 @@ const Dashboard = () => {
 
                 <div className="card">
                     <div className="flex align-items-center justify-content-between mb-4">
-                        <h5>通知</h5>
-                        <div>
+                        <h5>今日待审批</h5>
+                        {/* <div>
                             <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain" onClick={(event) => menu2.current?.toggle(event)} />
                             <Menu
                                 ref={menu2}
@@ -435,12 +435,12 @@ const Dashboard = () => {
                                     { label: 'Remove', icon: 'pi pi-fw pi-minus' }
                                 ]}
                             />
-                        </div>
+                        </div> */}
                     </div>
 
                     {/* <span className="block text-600 font-medium mb-3">TODAY</span> */}
                     <ul className="p-0 mx-0 mt-0 mb-4 list-none">
-                        <li className="flex align-items-center py-2 border-bottom-1 surface-border">
+                        <li className="flex align-items-center py-3 border-bottom-1 surface-border">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
                                 <i className="pi pi-info-circle text-xl text-blue-500" />
                             </div>
@@ -452,7 +452,19 @@ const Dashboard = () => {
                                 </span>
                             </span>
                         </li>
-                        <li className="flex align-items-center py-2">
+                        <li className="flex align-items-center py-3 border-bottom-1 surface-border">
+                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
+                                <i className="pi pi-info-circle text-xl text-blue-500" />
+                            </div>
+                            <span className="text-900 line-height-4">
+                                Richard Jones
+                                <span className="text-700">
+                                    {' '}
+                                    has purchased a blue t-shirt for <span className="text-blue-500">79$</span>
+                                </span>
+                            </span>
+                        </li>
+                        <li className="flex align-items-center py-3">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
                                 <i className="pi pi-info-circle text-xl text-blue-500" />
                             </div>
@@ -493,9 +505,9 @@ const Dashboard = () => {
                 </div>
                 <div className="card">
                     <div className="flex align-items-center justify-content-between mb-4">
-                        <h5>待审批</h5>
+                        <h5>今日待阅</h5>
                         <div>
-                            <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain" onClick={(event) => menu2.current?.toggle(event)} />
+                            {/* <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain" onClick={(event) => menu2.current?.toggle(event)} />
                             <Menu
                                 ref={menu2}
                                 popup
@@ -503,13 +515,13 @@ const Dashboard = () => {
                                     { label: 'Add New', icon: 'pi pi-fw pi-plus' },
                                     { label: 'Remove', icon: 'pi pi-fw pi-minus' }
                                 ]}
-                            />
+                            /> */}
                         </div>
                     </div>
 
                     {/* <span className="block text-600 font-medium mb-3">TODAY</span> */}
                     <ul className="p-0 mx-0 mt-0 mb-4 list-none">
-                        <li className="flex align-items-center py-2 border-bottom-1 surface-border">
+                        <li className="flex align-items-center py-3 border-bottom-1 surface-border">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
                                 <i className="pi pi-bell text-xl text-blue-500" />
                             </div>
@@ -521,7 +533,7 @@ const Dashboard = () => {
                                 </span>
                             </span>
                         </li>
-                        <li className="flex align-items-center py-2">
+                        <li className="flex align-items-center py-3">
                             <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
                                 <i className="pi pi-bell text-xl text-blue-500" />
                             </div>

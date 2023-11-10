@@ -35,4 +35,5 @@ interface Todo {
   beginTime: string,
   remindTimes: string,
   processInstId: string,
+  readState: number,
 }
