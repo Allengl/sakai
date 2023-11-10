@@ -91,9 +91,9 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
     setWbsData(result);
   }
 
-  const getInvoiceDetail = async () => {
+  const getInvoiceDetail = async (id: string) => {
     const queryFormDetailCmd = `${cmd}.queryFormDetail`
-    const res = await fetch(`${API_BASE_URL}?cmd=${queryFormDetailCmd}&sid=${sid}&boid=${boid}`)
+    const res = await fetch(`${API_BASE_URL}?cmd=${queryFormDetailCmd}&sid=${sid}&boid=${id}`)
     const data = await res.json()
     console.log(data)
     setInvoiceDetail(data)
@@ -116,7 +116,7 @@ const InvoiceForm: FC<InvoiceFormProps> = ({ pageType }) => {
       setTimeout(() => {
         router.push(`/pages/invoice/edit?id=${result.data}`);
       }, 2000)
-      getInvoiceDetail();
+      getInvoiceDetail(result.data);
       return result.data;
     }
   }

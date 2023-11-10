@@ -6,50 +6,55 @@ import { API_BASE_URL } from '../../../../constants/constants';
 import { DataTable } from 'primereact/datatable';
 import { Panel } from 'primereact/panel';
 import { Button } from 'primereact/button';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useApiStore } from '../../../stores/useApiStore';
-import { Todo } from '../../../../types/data';
 import { useDataStore } from '../../../stores/useDataStore';
 
-interface TaskTitleMap {
-  '待办任务': string
-  '待阅任务': string
-  '已办任务': string
-  '已阅任务': string
+interface TaskMap {
+  'todo': string
+  'read': string
+  'done': string
+  'readDone': string
+  [key: string]: string; // 添加字符串索引签名
 }
 
-type TaskTitle = keyof TaskTitleMap
 
 const ProcessPage = () => {
   const { sid, uid, cmd, taskInstId, processInstId, setTaskInstId, setProcessInstId, setBoid } = useApiStore()
   const { todoData, setTodoData } = useDataStore()
-  const [taskTitle, setTaskTitle] = useState<TaskTitle>('待办任务')
+  const [taskTitle, setTaskTitle] = useState<string>('待办任务')
+  const searchParams = useSearchParams()
   const router = useRouter()
-
+  const params = searchParams.get('taskType')
 
   const nestedMenuitems = [
     {
       label: '待办任务',
       icon: 'pi pi-fw pi-file',
       active: true,
-      command: () => { setTaskTitle('待办任务') }
+      command: () => {
+        router.push('/pages/process?taskType=todo')
+      }
     },
     {
       label: '待阅任务',
       icon: 'pi pi-fw pi-pencil',
-      command: () => { setTaskTitle('待阅任务') }
+      command: () => {
+        router.push('/pages/process?taskType=read')
+      }
     },
     {
       label: '已办任务',
       icon: 'pi pi-fw pi-calendar',
-      command: () => { setTaskTitle('已办任务') }
+      command: () => {
+        router.push('/pages/process?taskType=done')
+      }
     },
     {
       label: '已阅任务',
       icon: 'pi pi-fw pi-bell',
       command: () => {
-        console.log('已阅任务');
-        setTaskTitle('已阅任务')
+        router.push('/pages/process?taskType=readDone')
       }
     }
   ];
@@ -64,23 +69,28 @@ const ProcessPage = () => {
     setTodoData(data)
   }
 
-  const taskTitleMap: TaskTitleMap = {
-    '待办任务': 'queryTodoTask',
-    '待阅任务': 'queryToReadTask',
-    '已办任务': 'queryAlreadyDoTask',
-    '已阅任务': 'queryAlreadyReadTask',
+  const taskMap: TaskMap = {
+    'todo': 'queryTodoTask',
+    'read': 'queryToReadTask',
+    'done': 'queryAlreadyDoTask',
+    'readDone': 'queryAlreadyReadTask',
   }
 
-  const taskTypeMap = {
-    '待办任务': 'todo',
-    '待阅任务': 'read',
-    '已办任务': 'done',
-    '已阅任务': 'readDone',
+  const taskTitleMap: TaskMap = {
+    'todo': '待办任务',
+    'read': '待阅任务',
+    'done': '已办任务',
+    'readDone': '已阅任务'
   }
 
   useEffect(() => {
-    queryTask(taskTitleMap[taskTitle])
-  }, [taskTitle])
+    if (params) {
+      setTaskTitle(taskTitleMap[params])
+      queryTask(taskMap[params])
+    } else {
+      router.push('/pages/process?taskType=todo')
+    }
+  }, [taskTitle, searchParams])
 
   return (
     <div>
@@ -123,7 +133,9 @@ const ProcessPage = () => {
                       setTaskInstId(row.id)
                       setProcessInstId(row.processInstId)
                       setBoid(row.boid)
-                      router.push(`/pages/process/task?taskType=${taskTypeMap[taskTitle]}&id=${row.boid} `)
+                      if (params !== null && taskMap[params]) {
+                        router.push(`/pages/process/task?taskType=${taskMap[params]}&id=${row.boid} `)
+                      }
                     }}
                     icon="pi pi-search" text
                   />

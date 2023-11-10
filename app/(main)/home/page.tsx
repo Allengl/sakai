@@ -141,7 +141,7 @@ const Dashboard = () => {
         const res = await fetch(`${API_BASE_URL}?uid=${uid}&cmd=${queryFormListCmd}&sid=${sid}`, { method: 'POST', })
         const data = await res.json()
         console.log(data);
-        if (data.result === 'error' && data.errorCode === '403') {
+        if (!data) {
             toast.current?.show({ severity: 'error', summary: '登录已过期', detail: '请重新登录', life: 2000 });
             router.push('/auth/login')
         }
@@ -230,7 +230,7 @@ const Dashboard = () => {
     return (
         <div className="grid">
             <div className="col-12 lg:col-6 xl:col-3">
-                <Link href="/pages/process">
+                <Link href="/pages/process?taskType=todo">
                     <div className="card mb-0">
                         <div className="flex justify-content-between mb-3">
                             <div>
@@ -248,7 +248,7 @@ const Dashboard = () => {
                 </Link>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
-                <Link href="/pages/process?task=todo">
+                <Link href="/pages/process?taskType=read">
                     <div className="card mb-0">
                         <div className="flex justify-content-between mb-3">
                             <div>
@@ -265,7 +265,7 @@ const Dashboard = () => {
                 </Link>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
-                <Link href="/pages/process">
+                <Link href="/pages/process?taskType=done">
                     <div className="card mb-0">
                         <div className="flex justify-content-between mb-3">
                             <div>
@@ -282,7 +282,7 @@ const Dashboard = () => {
                 </Link>
             </div>
             <div className="col-12 lg:col-6 xl:col-3">
-                <Link href="/pages/process">
+                <Link href="/pages/process?taskType=readDone">
                     <div className="card mb-0">
                         <div className="flex justify-content-between mb-3">
                             <div>
