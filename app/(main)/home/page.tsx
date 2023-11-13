@@ -12,10 +12,12 @@ import { API_BASE_URL } from '../../../constants/constants';
 import { useRouter } from 'next/navigation';
 import { Tag } from 'primereact/tag';
 import { useApiStore } from '../../stores/useApiStore';
-import { Invoice } from '../../../types/data';
+import { Invoice, TodayTask } from '../../../types/data';
 import { useDataStore } from '../../stores/useDataStore';
 import { Toast } from 'primereact/toast';
 import Link from 'next/link';
+import TodoList from '../../components/TodoList';
+import { formatTimestamp } from '../../../lib/utils';
 
 
 const lineData: ChartData = {
@@ -40,12 +42,13 @@ const lineData: ChartData = {
     ]
 };
 
-type TasksNumber = {
+interface TasksNumber {
     queryTodoTask: number,
     queryToReadTask: number,
     queryAlreadyDoTask: number,
     queryAlreadyReadTask: number,
 }
+
 
 interface Show {
     severity: "success" | "info" | "warn" | "error" | undefined,
@@ -61,6 +64,8 @@ const Dashboard = () => {
     const menu1 = useRef<Menu>(null);
     const menu2 = useRef<Menu>(null);
     const [lineOptions, setLineOptions] = useState<ChartOptions>({});
+    const [toDayTodoTask, setToDayTodoTask] = useState<TodayTask[]>([])
+    const [toDayToReadTask, setToDayToReadTask] = useState<TodayTask[]>([])
     const { layoutConfig } = useContext(LayoutContext);
     const [tasksNumber, setTasksNumber] = useState<TasksNumber>({
         queryTodoTask: 0,
@@ -69,6 +74,7 @@ const Dashboard = () => {
         queryAlreadyReadTask: 0,
     })
     const { invoiceData, setInvoiceData } = useDataStore();
+
     const router = useRouter()
 
     const applyLightTheme = () => {
@@ -165,6 +171,15 @@ const Dashboard = () => {
 
     }
 
+    const queryTodayTask = async (type: 'queryTodoTask' | 'queryToReadTask') => {
+        const queryTaskCmd = `${cmd}.${type}`
+        const url = `${API_BASE_URL}?sid=${sid}&cmd=${queryTaskCmd}&uid=${uid}&isToday=true`;
+        const res = await fetch(url, { method: 'POST' })
+        const data = await res.json()
+        return data
+    }
+
+
     const getTasksNumber = async () => {
         const queryTodoTask = await queryTask('queryTodoTask')
         const queryToReadTask = await queryTask('queryToReadTask')
@@ -183,6 +198,16 @@ const Dashboard = () => {
     useEffect(() => {
         getTasksNumber()
         getInvoice()
+
+        queryTodayTask('queryTodoTask').then((data) => {
+            console.log(data);
+            setToDayTodoTask(data)
+
+        })
+        queryTodayTask('queryToReadTask').then((data) => {
+            console.log(data);
+            setToDayToReadTask(data)
+        })
     }, []);
 
     useEffect(() => {
@@ -425,125 +450,15 @@ const Dashboard = () => {
                 <div className="card">
                     <div className="flex align-items-center justify-content-between mb-4">
                         <h5>今日待审批</h5>
-                        {/* <div>
-                            <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain" onClick={(event) => menu2.current?.toggle(event)} />
-                            <Menu
-                                ref={menu2}
-                                popup
-                                model={[
-                                    { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-                                    { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-                                ]}
-                            />
-                        </div> */}
                     </div>
-
-                    {/* <span className="block text-600 font-medium mb-3">TODAY</span> */}
-                    <ul className="p-0 mx-0 mt-0 mb-4 list-none">
-                        <li className="flex align-items-center py-3 border-bottom-1 surface-border">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-info-circle text-xl text-blue-500" />
-                            </div>
-                            <span className="text-900 line-height-3">
-                                Richard Jones
-                                <span className="text-700">
-                                    {' '}
-                                    has purchased a blue t-shirt for <span className="text-blue-500">79$</span>
-                                </span>
-                            </span>
-                        </li>
-                        <li className="flex align-items-center py-3 border-bottom-1 surface-border">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-info-circle text-xl text-blue-500" />
-                            </div>
-                            <span className="text-900 line-height-4">
-                                Richard Jones
-                                <span className="text-700">
-                                    {' '}
-                                    has purchased a blue t-shirt for <span className="text-blue-500">79$</span>
-                                </span>
-                            </span>
-                        </li>
-                        <li className="flex align-items-center py-3">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-info-circle text-xl text-blue-500" />
-                            </div>
-                            <span className="text-700 line-height-3">
-                                Your request for withdrawal of <span className="text-blue-500 font-medium">2500$</span> has been initiated.
-                            </span>
-                        </li>
-                    </ul>
-
-
-
-
-
-                    {/* <span className="block text-600 font-medium mb-3">YESTERDAY</span>
-                    <ul className="p-0 m-0 list-none">
-                        <li className="flex align-items-center py-2 border-bottom-1 surface-border">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-blue-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-dollar text-xl text-blue-500" />
-                            </div>
-                            <span className="text-900 line-height-3">
-                                Keyser Wick
-                                <span className="text-700">
-                                    {' '}
-                                    has purchased a black jacket for <span className="text-blue-500">59$</span>
-                                </span>
-                            </span>
-                        </li>
-                        <li className="flex align-items-center py-2 border-bottom-1 surface-border">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-pink-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-question text-xl text-pink-500" />
-                            </div>
-                            <span className="text-900 line-height-3">
-                                Jane Davis
-                                <span className="text-700"> has posted a new questions about your product.</span>
-                            </span>
-                        </li>
-                    </ul> */}
+                    <TodoList todoData={toDayTodoTask} type='todo' />
                 </div>
                 <div className="card">
                     <div className="flex align-items-center justify-content-between mb-4">
                         <h5>今日待阅</h5>
-                        <div>
-                            {/* <Button type="button" icon="pi pi-ellipsis-v" rounded text className="p-button-plain" onClick={(event) => menu2.current?.toggle(event)} />
-                            <Menu
-                                ref={menu2}
-                                popup
-                                model={[
-                                    { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-                                    { label: 'Remove', icon: 'pi pi-fw pi-minus' }
-                                ]}
-                            /> */}
-                        </div>
                     </div>
-
-                    {/* <span className="block text-600 font-medium mb-3">TODAY</span> */}
-                    <ul className="p-0 mx-0 mt-0 mb-4 list-none">
-                        <li className="flex align-items-center py-3 border-bottom-1 surface-border">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-bell text-xl text-blue-500" />
-                            </div>
-                            <span className="text-900 line-height-3">
-                                Richard Jones
-                                <span className="text-700">
-                                    {' '}
-                                    has purchased a blue t-shirt for <span className="text-blue-500">79$</span>
-                                </span>
-                            </span>
-                        </li>
-                        <li className="flex align-items-center py-3">
-                            <div className="w-3rem h-3rem flex align-items-center justify-content-center bg-red-100 border-circle mr-3 flex-shrink-0">
-                                <i className="pi pi-bell text-xl text-blue-500" />
-                            </div>
-                            <span className="text-700 line-height-3">
-                                Your request for withdrawal of <span className="text-blue-500 font-medium">2500$</span> has been initiated.
-                            </span>
-                        </li>
-                    </ul>
+                    <TodoList todoData={toDayToReadTask} type='read' />
                 </div>
-
             </div>
         </div>
     );

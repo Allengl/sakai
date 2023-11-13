@@ -9,6 +9,7 @@ import { Button } from 'primereact/button';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApiStore } from '../../../stores/useApiStore';
 import { useDataStore } from '../../../stores/useDataStore';
+import { formatTimestamp } from '../../../../lib/utils';
 import { Todo } from '../../../../types/data';
 
 interface TaskMap {
@@ -192,22 +193,7 @@ const ProcessPage = () => {
   }
 
 
-  // 时间戳转换为中国时间的函数
-  const formatTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return date.toLocaleString('zh-CN',
-      {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false,
-        timeZone: 'Asia/Shanghai', // 设置中国时区
-      }
-    );
-  };
+ 
 
 
   useEffect(() => {

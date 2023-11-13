@@ -26,7 +26,7 @@ export interface Wbs {
   TYPE: string,
 }
 
-interface Todo {
+export interface Todo {
   id: string,
   title: string,
   target: string,
@@ -36,4 +36,13 @@ interface Todo {
   remindTimes: string,
   processInstId: string,
   readState: number,
+}
+
+export interface TodayTask {
+  title: string
+  target: string
+  beginTime: number
+  boid: string
+  id: string
+  processInstId: string
 }
